@@ -35,8 +35,9 @@ function korrString($s)
 	}
 	$s = str_replace($from, $to, $s);
 	//$s = preg_replace('/"([^"]+)"/', '"`$1"\'', $s); // Anfuehrungszeichen lassen sich nicht korrekt reparieren.
-	$s = str_replace('"', '\'\'', $s);
 	$s = str_replace(array(
+			'\\',
+			'"',
 			'{',
 			'}',
 			//'...',
@@ -55,7 +56,11 @@ function korrString($s)
 			'­',
 			'[',
 			']',
+			'~',
+			'$',
 		), array(
+			'\backslash ',
+			'\textquotedbl ',
 			'\{',
 			'\}',
 			//'\ldots',
@@ -74,6 +79,8 @@ function korrString($s)
 			'-',
 			'$[$',
 			'$]$',
+			'\~{}',
+			'\$',
 		), $s);
 
 	$s = korrDash($s);
