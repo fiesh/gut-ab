@@ -49,6 +49,7 @@ class FragmentLoader {
 		$frags = array();
 		foreach($fragments as $f) {
 			$a = self::processString($f['revisions'][0]['*']);
+			$a['wikiTitle'] = $f['title'];
 			if(isset($a[1]) && $a[1])
 				$frags[] = $a;
 		}

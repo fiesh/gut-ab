@@ -21,7 +21,7 @@ function korrBereich($s)
 		return false;
 	}
 
-	return substr($ret, 0, strlen($ret)-2);
+	return trim(substr($ret, 0, strlen($ret)-2));
 }
 
 function korrString($s)

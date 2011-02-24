@@ -31,6 +31,7 @@ foreach($fragments as $f) {
 			$list[$i]['inLit'] = $f[8];
 			$list[$i]['seitefund'] = $f[4];
 			$list[$i]['zeilenfund'] = $f[5];
+			$list[$i]['wikiTitle'] = titleToKey($f['wikiTitle']);
 			preg_match('/\d+/', $list[$i]['seite'], $m1);
 			preg_match('/\d+/', $list[$i]['zeilen'], $m2);
 			$sort[$i] = (int)($m1[0]) *1000 + (int)$m2[0];
@@ -72,12 +73,14 @@ foreach($whitelist as $cat) {
 			$cite = '\cite';
 		}
 
+		$start = '\belowpdfbookmark{Fragment '.$l['seite'].' '.$l['zeilen'].'}{'.$l['wikiTitle'].'}';
+
 		if($l['inLit'] !== 'ja')
-			$start = '\fragmentNichtLit{';
+			$start .= '\fragmentNichtLit{';
 		else
-			$start = '\fragment{';
+			$start .= '\fragment{';
 	
-		echo $start.$l['seite'].'}{'.$l['zeilen'].'}{'.$l['kategorie'].'}{'.$l['plagiat'].'}{'.$l['orig'].'}{'.$cite.'{'.$l['quelle']."}}\n";
+		echo $start.$l['seite'].'}{'.$l['zeilen'].'}{'.$l['kategorie'].'}{'.$l['plagiat'].'}{'.$l['orig'].'}{'.$cite.'{'.$l['quelle'].'}}\hypertarget{'.$l['wikiTitle']."}{}\n";
 		if($i++ == 20) break;
 	}
 }
