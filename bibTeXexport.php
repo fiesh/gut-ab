@@ -1,5 +1,7 @@
 <?php
 
+require_once('korrekturen.php');
+
 function renameAndFix($fields)
 {
 	$renames = array(
@@ -31,21 +33,14 @@ function renameAndFix($fields)
 	if(isset($fields['Tag']) && $fields['Tag'])
 		$ret['month'] = $fields['Tag'].'. '.$ret['month'];
 
-	// Seiten korrigieren
 	if(isset($ret['pages']))
-		if(preg_match('/(\d+)-(\d+)/', $ret['pages'], $matches)) {
-			if($matches[1][0] == $matches[2][0])
-				$ret['pages'] = $matches[1][0];
-			else
-				$ret['pages'] = $matches[1][0].'--'.$matches[2][0];
-		}
+		$ret['pages'] = korrBereich($ret['pages']);
 
-	// Anfuehrungszeichen im Titel fixen
-	$ret['title'] = preg_replace('/"([^"]+)"/', '"`$1"\'', $ret['title']);
+	$ret['title'] = korrString($ret['title']);
 
 	// - durch -- ersetzen, wenn es passt
 	foreach(array('title', 'publisher') as $key)
-		$ret[$key] = str_replace(' - ', ' -- ', $ret[$key]);
+		$ret[$key] = korrDash($ret[$key]);
 
 	return $ret;
 }
@@ -60,12 +55,6 @@ function decideType($f)
 		return 'book';
 
 	return 'misc';
-}
-
-function titleToKey($title)
-{
-	$title = str_replace('Kategorie:', '', $title);
-	return str_replace(' ', '_', $title);
 }
 
 $s = unserialize(file_get_contents('http://de.guttenplag.wikia.com/api.php?action=query&list=categorymembers&cmtitle=Kategorie:Quelle&format=php&cmlimit=500'));
@@ -87,6 +76,9 @@ foreach($s as $cat) {
 $e = unserialize(file_get_contents('http://de.guttenplag.wikia.com/api.php?action=query&prop=revisions&rvprop=content&format=php&pageids='.$pageids));
 if(isset($e['query']['pages']))
 	$entries = array_merge($entries, $e['query']['pages']);
+
+$catFile = fopen('categories.php', 'w');
+fwrite($catFile, '<?php $categories = array(');
 
 foreach($entries as $entry) {
 	if(preg_match('/{{Quelle/', $entry['revisions'][0]['*']) === 1) {
@@ -121,5 +113,9 @@ foreach($entries as $entry) {
 			echo "	$key = {".$val."},\n";
 		}
 		echo "}\n";
+
+		fwrite($catFile, '\''.titleToKey($entry['title']).'\',');
 	}
 }
+fwrite($catFile, '); ?>');
+fclose($catFile);
