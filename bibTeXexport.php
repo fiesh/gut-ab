@@ -42,6 +42,9 @@ function renameAndFix($fields)
 	foreach(array('title', 'publisher') as $key)
 		$ret[$key] = korrDash($ret[$key]);
 
+	// Titel Kapitaele exportieren
+	$ret['title'] = preg_replace('/([A-Z])/', '{$1}', $ret['title']);
+
 	return $ret;
 }
 

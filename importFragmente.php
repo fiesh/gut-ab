@@ -31,6 +31,9 @@ foreach($fragments as $f) {
 			$list[$i]['inLit'] = $f[8];
 			$list[$i]['seitefund'] = $f[4];
 			$list[$i]['zeilenfund'] = $f[5];
+			preg_match('/\d+/', $list[$i]['seite'], $m1);
+			preg_match('/\d+/', $list[$i]['zeilen'], $m2);
+			$sort[$i] = (int)($m1[0]) *1000 + (int)$m2[0];
 			$i++;
 			$found = true;
 			break;
@@ -42,30 +45,40 @@ foreach($fragments as $f) {
 	}
 }
 
-foreach($list as $l) {
-	$l['seite'] = korrBereich($l['seite']);
-	$l['seitefund'] = korrBereich($l['seitefund']);
-	$l['zeilen'] = korrBereich($l['zeilen']);
-	$l['zeilenfund'] = korrBereich($l['zeilenfund']);
-	$l['plagiat'] = korrString($l['plagiat']);
-	$l['orig'] = korrString($l['orig']);
+array_multisort($sort, $list);
 
-	if($l['seitefund']) {
-		if($l['zeilenfund'])
-			$cite = '\cite[S.~'.$l['seitefund'].' Z.~'.$l['zeilenfund'].']';
+foreach($whitelist as $cat) {
+	$done = false;
+	foreach($list as $l) {
+		if($l['kategorie'] !== $cat)
+			continue;
+		if(!$done) {
+			echo '\subsection{'.$cat."}\n";
+			$done = true;
+		}
+		$l['seite'] = korrBereich($l['seite']);
+		$l['seitefund'] = korrBereich($l['seitefund']);
+		$l['zeilen'] = korrBereich($l['zeilen']);
+		$l['zeilenfund'] = korrBereich($l['zeilenfund']);
+		$l['plagiat'] = korrString($l['plagiat']);
+		$l['orig'] = korrString($l['orig']);
+	
+		if($l['seitefund']) {
+			if($l['zeilenfund'])
+				$cite = '\cite[S.~'.$l['seitefund'].' Z.~'.$l['zeilenfund'].']';
+			else
+				$cite = '\cite[S.~'.$l['seitefund'].']';
+		} else {
+			$cite = '\cite';
+		}
+
+		if($l['inLit'] !== 'ja')
+			$start = '\fragmentNichtLit{';
 		else
-			$cite = '\cite[S.~'.$l['seitefund'].']';
-	} else {
-		$cite = '\cite';
+			$start = '\fragment{';
+	
+		echo $start.$l['seite'].'}{'.$l['zeilen'].'}{'.$l['kategorie'].'}{'.$l['plagiat'].'}{'.$l['orig'].'}{'.$cite.'{'.$l['quelle']."}}\n";
+		if($i++ == 20) break;
 	}
-
-	if($l['inLit'] !== 'ja')
-		$start = '\fragmentNichtLit{';
-	else
-		$start = '\fragment{';
-
-	echo $start.$l['seite'].'}{'.$l['zeilen'].'}{'.$l['kategorie'].'}{'.$l['plagiat'].'}{'.$l['orig'].'}{'.$cite.'{'.$l['quelle']."}}\n";
-	if($i++ == 20) break;
 }
 
-//var_dump($list);

@@ -7,14 +7,14 @@ function korrBereich($s)
 	if(preg_match_all('/(\d+)[-,](\d+)/', $s, $matches)) {
 		while(isset($matches[1][$i])) {
 			if($matches[1][$i] == $matches[2][$i])
-				$ret .= $matches[1][$i].',~';
+				$ret .= ((int)$matches[1][$i]).',~';
 			else
-				$ret .= $matches[1][$i].'--'.$matches[2][$i].',~';
+				$ret .= ((int)$matches[1][$i]).'--'.((int)$matches[2][$i]).',~';
 			$i++;
 		}
 	} else if(preg_match_all('/(\d+)/', $s, $matches)) {
 		while(isset($matches[1][$i])) {
-			$ret .= $matches[1][$i].',~';
+			$ret .= ((int)$matches[1][$i]).',~';
 			$i++;
 		}
 	} else {
