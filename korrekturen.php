@@ -54,10 +54,10 @@ function korrString($s)
 			'°',
 			'‑',
 			'­',
+			'$',
 			'[',
 			']',
 			'~',
-			'$',
 		), array(
 			'\backslash ',
 			'\textquotedbl ',
@@ -77,10 +77,10 @@ function korrString($s)
 			'o',
 			'--',
 			'-',
+			'\$',
 			'$[$',
 			'$]$',
 			'\~{}',
-			'\$',
 		), $s);
 
 	$s = korrDash($s);
