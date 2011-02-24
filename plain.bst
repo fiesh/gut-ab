@@ -378,8 +378,8 @@ FUNCTION {format.pages}
 { pages empty$
     { "" }
     { pages multi.page.check
-	{ "pages" pages n.dashify tie.or.space.connect }
-	{ "page" pages tie.or.space.connect }
+	{ "Seiten" pages n.dashify tie.or.space.connect }
+	{ "Seite" pages tie.or.space.connect }
       if$
     }
   if$
