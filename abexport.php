@@ -1,4 +1,4 @@
-\documentclass[ngerman,final,fontsize=12pt,paper=a4,twoside,BCOR=8mm,draft=false]{scrartcl}
+\documentclass[ngerman,final,fontsize=12pt,paper=a4,twoside,toc=bibliography,BCOR=8mm,draft=false]{scrartcl}
 
 \usepackage[T1]{fontenc}
 \usepackage{babel}
