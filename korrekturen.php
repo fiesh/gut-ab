@@ -24,9 +24,9 @@ function korrBereich($s)
 	return trim(substr($ret, 0, strlen($ret)-2));
 }
 
-function korrString($s)
+function korrStringWiki($s)
 {
-	preg_match_all('/&[#\d\w]+;/', $s, $matches);
+	preg_match_all('/&[#\d\w]+;/s', $s, $matches);
 	$i = 0;
 	while(isset($matches[0][$i])) {
 		$from[$i] = $matches[0][$i];
@@ -36,12 +36,7 @@ function korrString($s)
 	$s = str_replace($from, $to, $s);
 	//$s = preg_replace('/"([^"]+)"/', '"`$1"\'', $s); // Anfuehrungszeichen lassen sich nicht korrekt reparieren.
 	$s = str_replace(array(
-			'\\',
 			'"',
-			'{',
-			'}',
-			//'...',
-			//'..',
 			'&',
 			'%',
 			'',
@@ -59,12 +54,7 @@ function korrString($s)
 			']',
 			'~',
 		), array(
-			'\backslash ',
 			'\textquotedbl ',
-			'\{',
-			'\}',
-			//'\ldots',
-			//'\ldots',
 			'\&',
 			'\%',
 			'',
@@ -85,6 +75,20 @@ function korrString($s)
 
 	$s = korrDash($s);
 	return trim(strip_tags($s));
+}
+
+function korrString($s)
+{
+	$s = str_replace(array(
+			'\\',
+			'{',
+			'}',
+		), array(
+			'\backslash ',
+			'\{',
+			'\}',
+		), $s);
+	return korrStringWiki($s);
 }
 
 // - durch -- ersetzen, wenn es passt
