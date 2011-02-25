@@ -2,6 +2,8 @@
 
 require_once('korrekturen.php');
 
+setlocale(LC_ALL, 'de_DE');
+
 $pageid = 72596;
 
 $content = unserialize(file_get_contents('http://de.guttenplag.wikia.com/api.php?action=query&prop=revisions&rvprop=content&format=php&pageids='.$pageid));
@@ -10,9 +12,9 @@ $content = $content['query']['pages'][$pageid]['revisions'][0]['*'];
 
 $content = preg_replace('/.*BEGIN_ABSCHLUSSBERICHT/s', '', $content);
 
-$content = preg_replace('/===\s*([()\w\s]+?)\s*===/s', '\subsection{$1}', $content);
+$content = preg_replace('/===\s*([^=]+?)\s*===/s', '\subsection{$1}', $content);
 
-$content = preg_replace('/==\s*([()\w\s]+?)\s*==/s', '\section{$1}', $content);
+$content = preg_replace('/==\s*([^=]+?)\s*==/s', '\section{$1}', $content);
 
 // references
 $content = preg_replace('/\[\[([^]|]*)[^]]*\]\]/se', '\'\hyperlink{\'.titleToKey(\'$1\').\'}{$1}\'', $content);
