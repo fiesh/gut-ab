@@ -45,6 +45,9 @@ function renameAndFix($fields)
 	// Titel Kapitaele exportieren
 	$ret['title'] = preg_replace('/([A-Z])/', '{$1}', $ret['title']);
 
+	// , durch 'and' ersetzen bei den autoren
+	$ret['author'] = str_replace(',', ' and', $ret['author']);
+
 	return $ret;
 }
 
