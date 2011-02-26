@@ -100,8 +100,8 @@ function korrDash($s)
 function titleToKey($title)
 {
 	$title = str_replace('Kategorie:', '', $title);
-	$title = str_replace(' ', '_', $title);
-	$title = preg_replace('/[^a-zA-Z0-9]/', '_', $title);
+	$title = str_replace(' ', '-', $title);
+	$title = preg_replace('/[^a-zA-Z0-9]/', '-', $title);
 
 	return $title;
 }

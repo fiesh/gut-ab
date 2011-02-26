@@ -6,8 +6,8 @@ require_once('FragmentLoader.php');
 require_once('categories.php');
 require_once('korrekturen.php');
 
-$fragments = FragmentLoader::getFragments();
-$file = fopen('cache', 'w'); fwrite($file, serialize($fragments)); fclose($file);
+//$fragments = FragmentLoader::getFragments();
+//$file = fopen('cache', 'w'); fwrite($file, serialize($fragments)); fclose($file);
 
 $fragments = unserialize(file_get_contents('cache'));
 
@@ -41,7 +41,11 @@ foreach($fragments as $f) {
 		}
 	}
 	if(!$found) {
-		print "%XXX: Fragment $f[1] $f[2]: Ignoriere, keine Quelle gefunden!\n";
+		print "%XXX: Fragment $f[1] $f[2]: Ignoriere, keine Quelle gefunden! (Kategorien: ";
+		foreach($matches[1] as $c) {
+			echo "$c, ";
+		}
+		echo ")\n";
 		continue;
 	}
 }

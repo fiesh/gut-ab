@@ -121,6 +121,8 @@ foreach($entries as $entry) {
 		echo "}\n";
 
 		fwrite($catFile, '\''.titleToKey($entry['title']).'\',');
+	} else {
+		print 'XXX: Ignoriere Quelle: '.$entry['title']."\n";
 	}
 }
 fwrite($catFile, '); ?>');
