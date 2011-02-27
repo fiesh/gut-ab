@@ -53,6 +53,7 @@ function korrStringWiki($s)
 			'[',
 			']',
 			'~',
+			'−',
 		), array(
 			'\textquotedbl ',
 			'\&',
@@ -65,12 +66,13 @@ function korrStringWiki($s)
 			' ',
 			'fl',
 			'o',
-			'--',
+			'---',
 			'-',
 			'\$',
 			'$[$',
 			'$]$',
 			'\~{}',
+			'---',
 		), $s);
 
 	$s = korrDash($s);
@@ -94,7 +96,7 @@ function korrString($s)
 // - durch -- ersetzen, wenn es passt
 function korrDash($s)
 {
-	return str_replace(' - ', ' -- ', $s);
+	return str_replace(' - ', ' --- ', $s);
 }
 
 function titleToKey($title)
