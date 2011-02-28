@@ -6,8 +6,8 @@ require_once('FragmentLoader.php');
 require_once('categories.php');
 require_once('korrekturen.php');
 
-//$fragments = FragmentLoader::getFragments();
-//$file = fopen('cache', 'w'); fwrite($file, serialize($fragments)); fclose($file);
+$fragments = FragmentLoader::getFragments();
+$file = fopen('cache', 'w'); fwrite($file, serialize($fragments)); fclose($file);
 
 $fragments = unserialize(file_get_contents('cache'));
 
