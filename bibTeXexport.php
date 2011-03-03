@@ -16,7 +16,9 @@ function renameAndFix($fields)
 		'Jahr' => 'year',
 		'Monat' => 'month',
 		'Tag' => FALSE, // Wird mit in Monat eingebaut
-		'Ausgabe' => 'volume',
+		'Ausgabe' => 'edition',
+		'Jahrgang' => 'volume',
+		'Nummer' => 'number',
 		'Seiten' => 'pages',
 		'Schluessel' => 'key',
 		'URL' => 'url',
@@ -34,6 +36,18 @@ function renameAndFix($fields)
 		} else {
 			print "Fehler, kann $key nicht uebersetzen.  Titel: ".$fields['Titel']."\n";
 		}
+	}
+
+	// Temporaerer Fix fuer "article"-Eintraege mit "Ausgabe"
+	if(isset($ret['journal']) && isset($ret['edition'])) {
+		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Ausgabe\": {$ret['title']}\n";
+		print "WARNUNG: Temporaere Ersetzung von \"Ausgabe\" durch \"Nummer\" erfolgt.\n";
+		if(isset($ret['number'])) {
+			$ret['number'] = $ret['edition'].','.$ret['number'];
+		} else {
+			$ret['number'] = $ret['edition'];
+		}
+		unset($ret['edition']);
 	}
 
 	// Tag einbauen
