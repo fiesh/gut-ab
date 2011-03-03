@@ -6,9 +6,12 @@ function renameAndFix($fields)
 {
 	$renames = array(
 		'Autor' => 'author',
+		'Hrsg' => 'editor',
 		'Titel' => 'title',
 		'Verlag' => 'publisher',
 		'Zeitschrift' => 'journal',
+		'Sammlung' => 'booktitle',
+		'Reihe' => 'series',
 		'Ort' => 'address',
 		'Jahr' => 'year',
 		'Monat' => 'month',
@@ -18,6 +21,9 @@ function renameAndFix($fields)
 		'URL' => 'url',
 		'ISBN' => 'ISBN',
 		'ISSN' => 'ISSN',
+		'Anmerkung' => 'note',
+		'InLit' => false, // nicht uebernehmen
+		'InFN' => false, // nicht uebernehmen
 	);
 
 	foreach($fields as $key => $val) {
@@ -36,17 +42,23 @@ function renameAndFix($fields)
 	if(isset($ret['pages']))
 		$ret['pages'] = korrBereich($ret['pages']);
 
-	$ret['title'] = korrString($ret['title']);
+	// Titel korrigieren, Kapitaele exportieren
+	foreach(array('title', 'booktitle') as $key) {
+		if(isset($ret[$key])) {
+			$ret[$key] = korrString($ret[$key]);
+			$ret[$key] = preg_replace('/([A-Z])/', '{$1}', $ret[$key]);
+		}
+	}
 
 	// - durch -- ersetzen, wenn es passt
 	foreach(array('title', 'publisher') as $key)
-		$ret[$key] = korrDash($ret[$key]);
-
-	// Titel Kapitaele exportieren
-	$ret['title'] = preg_replace('/([A-Z])/', '{$1}', $ret['title']);
+		if(isset($ret[$key]))
+			$ret[$key] = korrDash($ret[$key]);
 
 	// , durch 'and' ersetzen bei den autoren
-	$ret['author'] = str_replace(',', ' and', $ret['author']);
+	foreach(array('author', 'editor') as $key)
+		if(isset($ret[$key]))
+			$ret[$key] = str_replace(',', ' and ', $ret[$key]);
 
 	return $ret;
 }
@@ -56,6 +68,9 @@ function decideType($f)
 {
 	if(isset($f['journal']))
 		return 'article';
+
+	if(isset($f['booktitle']))
+		return 'incollection';
 
 	if(isset($f['publisher']))
 		return 'book';
@@ -107,7 +122,8 @@ foreach($entries as $entry) {
 
 		$fields = renameAndFix($fields);
 
-		if(!isset($fields['author']) || !isset($fields['title'])) {
+		if((!isset($fields['author']) && !isset($fields['editor']))
+				|| !isset($fields['title'])) {
 			print 'Fehlender Autor/Titel: '.$entry['title']."\n";
 			continue;
 		}
