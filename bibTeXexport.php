@@ -18,6 +18,7 @@ function renameAndFix($fields)
 		'Tag' => FALSE, // Wird mit in Monat eingebaut
 		'Ausgabe' => 'volume',
 		'Seiten' => 'pages',
+		'Schluessel' => 'key',
 		'URL' => 'url',
 		'ISBN' => 'ISBN',
 		'ISSN' => 'ISSN',
@@ -122,9 +123,8 @@ foreach($entries as $entry) {
 
 		$fields = renameAndFix($fields);
 
-		if((!isset($fields['author']) && !isset($fields['editor']))
-				|| !isset($fields['title'])) {
-			print 'Fehlender Autor/Titel: '.$entry['title']."\n";
+		if(!isset($fields['title'])) {
+			print 'Fehlender Titel: '.$entry['title']."\n";
 			continue;
 		}
 
