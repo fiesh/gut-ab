@@ -3,13 +3,13 @@ TARGET=ab
 all: ${TARGET}.bib ${TARGET}.tex ${TARGET}.pdf
 
 ${TARGET}.pdf: ${TARGET}.bbl ${TARGET}.tex
-	@pdflatex ${TARGET}.tex
+	@pdflatex -interaction=nonstopmode ${TARGET}.tex
 
 ${TARGET}.bbl: ${TARGET}.bib ${TARGET}.tex
-	@pdflatex ${TARGET}.tex
+	@pdflatex -interaction=nonstopmode ${TARGET}.tex
 	@bibtex ${TARGET}
-	@pdflatex ${TARGET}.tex
-	@pdflatex ${TARGET}.tex
+	@pdflatex -interaction=nonstopmode ${TARGET}.tex
+	@pdflatex -interaction=nonstopmode ${TARGET}.tex
 
 ${TARGET}.tex::
 	@php abexport.php > ${TARGET}.tex
