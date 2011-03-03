@@ -19,6 +19,10 @@ $content = preg_replace('/==\s*([^=]+?)\s*==/s', '\section{$1}', $content);
 // references
 $content = preg_replace('/\[\[([^]|]*)[^]]*\]\]/se', '\'\hyperlink{\'.titleToKey(\'$1\').\'}{$1}\'', $content);
 
+// external links
+// FIXME: doesn't work with [http://... Link text] style links yet
+$content = preg_replace('/\[(https?:\/\/[^\]]*)\]/s', '\footnote{\url{$1}}', $content);
+
 $content = preg_replace('/\'\'\'([^\']*)\'\'\'/s', '\textbf{$1}', $content);
 $content = preg_replace('/\'\'([^\']*)\'\'/s', '\textsl{$1}', $content);
 $content = preg_replace(';<u>([^<]*)</u>;s', '\underline{$1}', $content);
