@@ -4,6 +4,7 @@
 function korrBereich($s)
 {
 	$i = 0;
+	$ret = '';
 	if(preg_match_all('/(\d+)[-,](\d+)/', $s, $matches)) {
 		while(isset($matches[1][$i])) {
 			if($matches[1][$i] == $matches[2][$i])
@@ -28,6 +29,8 @@ function korrStringWiki($s)
 {
 	preg_match_all('/&[#\d\w]+;/s', $s, $matches);
 	$i = 0;
+	$from = array();
+	$to = array();
 	while(isset($matches[0][$i])) {
 		$from[$i] = $matches[0][$i];
 		$to[$i] = mb_convert_encoding($from[$i], 'UTF-8', 'HTML-ENTITIES');
