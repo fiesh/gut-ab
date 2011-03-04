@@ -1,6 +1,7 @@
 <?php
 
 require_once('korrekturen.php');
+require_once('WikiLoader.php');
 
 function renameAndFix($fields)
 {
@@ -93,25 +94,8 @@ function decideType($f)
 	return 'misc';
 }
 
-$s = unserialize(file_get_contents('http://de.guttenplag.wikia.com/api.php?action=query&list=categorymembers&cmtitle=Kategorie:Quelle&format=php&cmlimit=500'));
-
-$s = $s['query']['categorymembers'];
-
-$i = 0;
-$pageids = '';
-$entries = array();
-foreach($s as $cat) {
-	$pageids .= $cat['pageid'].'|';
-	if(++$i === 49) {
-		$i = 0;
-		$e = unserialize(file_get_contents('http://de.guttenplag.wikia.com/api.php?action=query&prop=revisions&rvprop=content&format=php&pageids='.$pageids));
-		$entries = array_merge($entries, $e['query']['pages']);
-		$pageids = '';
-	}
-}
-$e = unserialize(file_get_contents('http://de.guttenplag.wikia.com/api.php?action=query&prop=revisions&rvprop=content&format=php&pageids='.$pageids));
-if(isset($e['query']['pages']))
-	$entries = array_merge($entries, $e['query']['pages']);
+$pageids = WikiLoader::getCategoryMembers('Kategorie:Quelle');
+$entries = WikiLoader::getEntries($pageids, true, true);
 
 $catFile = fopen('categories.php', 'w');
 fwrite($catFile, '<?php $categories = array(');

@@ -1,14 +1,11 @@
 <?php
 
 require_once('korrekturen.php');
+require_once('WikiLoader.php');
 
 setlocale(LC_ALL, 'de_DE');
 
-$pageid = 72596;
-
-$content = unserialize(file_get_contents('http://de.guttenplag.wikia.com/api.php?action=query&prop=revisions&rvprop=content&format=php&pageids='.$pageid));
-
-$content = $content['query']['pages'][$pageid]['revisions'][0]['*'];
+$content = WikiLoader::getRawTextByTitle('EntwurfAbschlussbericht');
 
 $content = preg_replace('/.*BEGIN_ABSCHLUSSBERICHT/s', '', $content);
 
