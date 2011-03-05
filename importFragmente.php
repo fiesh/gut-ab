@@ -41,11 +41,7 @@ foreach($fragments as $f) {
 		}
 	}
 	if(!$found) {
-		print "%XXX: Fragment $f[1] $f[2]: Ignoriere, keine Quelle gefunden! (Kategorien: ";
-		foreach($matches[1] as $c) {
-			echo "$c, ";
-		}
-		echo ")\n";
+		print "%XXX: Fragment $f[1] $f[2]: Ignoriere, keine Quelle gefunden! (Kategorien: ".implode(", ", $matches[1]).")\n";
 		continue;
 	}
 }
