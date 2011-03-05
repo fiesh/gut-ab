@@ -76,6 +76,11 @@ function renameAndFix($fields)
 		if(isset($ret[$key]))
 			$ret[$key] = str_replace(',', ' and ', $ret[$key]);
 
+	// & durch \& ersetzen bei publisher
+	foreach(array('publisher') as $key)
+		if(isset($ret[$key]))
+			$ret[$key] = str_replace('&', '\&', $ret[$key]);
+
 	return $ret;
 }
 
