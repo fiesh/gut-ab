@@ -1,5 +1,8 @@
 #!/bin/sh
 
-# Hint: run 'make' or 'php abexport.php > ab.tex' before running this script.
+# Run 'make' before running this script.
 
-grep '^%XXX' ab.tex | grep 'Ignoriere, keine Quelle gefunden!' | sed -e 's/^%XXX: \(Fragment[^:]\+\):/%XXX: [[\1]]:/'
+echo '<code>'
+grep '^XXX' ab.bib | grep 'Ignoriere Quelle' | sed -e 's/^XXX: Ignoriere Quelle: \(.*\)$/Ignoriere Quelle: [[:\1]]/' | sed -e 's/$/<br\/>/'
+grep '^%XXX' ab.tex | grep 'Ignoriere, keine Quelle gefunden!' | sed -e 's/^%XXX: \(Fragment[^:]\+\):/[[\1]]:/' | sed -e 's/$/<br\/>/'
+echo '</code>'
