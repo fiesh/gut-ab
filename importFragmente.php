@@ -15,7 +15,7 @@ $list = array();
 $i = 0;
 foreach($fragments as $f) {
 	if(!in_array($f[7], $whitelist)) {
-		print "%Fragment $f[1] $f[2]: Ignoriere, Plagiatstyp '$f[7]'\n";
+		print "%Fragment {$f['wikiTitle']}: Ignoriere, Plagiatstyp '$f[7]'\n";
 		continue;
 	}
 	preg_match_all('/\[\[Kategorie:([^]]+)\]\]/', $f[0], $matches);
@@ -41,7 +41,7 @@ foreach($fragments as $f) {
 		}
 	}
 	if(!$found) {
-		print "%XXX: Fragment $f[1] $f[2]: Ignoriere, keine Quelle gefunden! (Kategorien: ".implode(", ", $matches[1]).")\n";
+		print "%XXX: Fragment {$f['wikiTitle']}: Ignoriere, keine Quelle gefunden! (Kategorien: ".implode(", ", $matches[1]).")\n";
 		continue;
 	}
 }
