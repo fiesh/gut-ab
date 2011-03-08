@@ -6,6 +6,7 @@ ${TARGET}.pdf: ${TARGET}.bbl ${TARGET}.tex
 	@pdflatex -interaction=nonstopmode ${TARGET}.tex
 
 ${TARGET}.bbl: ${TARGET}.bib ${TARGET}.tex
+	@rm -f ${TARGET}.bbl
 	@pdflatex -interaction=nonstopmode ${TARGET}.tex
 	@bibtex ${TARGET}
 	@pdflatex -interaction=nonstopmode ${TARGET}.tex
