@@ -55,31 +55,22 @@ function renameAndFix($fields)
 	if(isset($fields['Tag']) && $fields['Tag'])
 		$ret['month'] = $fields['Tag'].'. '.$ret['month'];
 
-	if(isset($ret['pages']))
-		$ret['pages'] = korrBereich($ret['pages']);
-
-	// Titel korrigieren, Kapitaele exportieren
-	foreach(array('title', 'booktitle') as $key) {
-		if(isset($ret[$key])) {
-			$ret[$key] = korrString($ret[$key]);
-			$ret[$key] = preg_replace('/([A-Z])/', '{$1}', $ret[$key]);
-		}
+	// Weitere Korrekturen
+	$korrs = array(
+		'title' => array('korrString', 'korrVersalien', 'korrDash'),
+		'booktitle' => array('korrString', 'korrVersalien'),
+		'author' => array('korrBracket', 'korrAnd'),
+		'editor' => array('korrBracket', 'korrAnd'),
+		'publisher' => array('korrAmpersand', 'korrDash'),
+		'pages' => array('korrBereich'),
+		'note' => array('korrLinks'),
+		'year' => array('korrBracket'),
+	);
+	foreach($korrs as $key => $korrFunctions) {
+		if(isset($ret[$key]))
+			foreach($korrFunctions as $korrFunction)
+				$ret[$key] = $korrFunction($ret[$key]);
 	}
-
-	// - durch -- ersetzen, wenn es passt
-	foreach(array('title', 'publisher') as $key)
-		if(isset($ret[$key]))
-			$ret[$key] = korrDash($ret[$key]);
-
-	// , durch 'and' ersetzen bei den autoren
-	foreach(array('author', 'editor') as $key)
-		if(isset($ret[$key]))
-			$ret[$key] = str_replace(',', ' and ', $ret[$key]);
-
-	// & durch \& ersetzen bei publisher
-	foreach(array('publisher') as $key)
-		if(isset($ret[$key]))
-			$ret[$key] = str_replace('&', '\&', $ret[$key]);
 
 	return $ret;
 }

@@ -96,10 +96,43 @@ function korrString($s)
 	return korrStringWiki($s);
 }
 
+// Grossbuchstaben in Titel und Sammlung vor bibtex schuetzen
+function korrVersalien($s)
+{
+	return preg_replace('/([A-Z])/', '{$1}', $s);
+}
+
 // - durch -- ersetzen, wenn es passt
 function korrDash($s)
 {
 	return str_replace(' - ', ' --- ', $s);
+}
+
+// & durch \& ersetzen
+function korrAmpersand($s)
+{
+	return str_replace('&', '\&', $s);
+}
+
+// , durch and ersetzen in den Autoren
+function korrAnd($s)
+{
+	return str_replace(',', ' and ', $s);
+}
+
+// externe Links in Anmerkung mit @url umfassen
+function korrLinks($s)
+{
+	return preg_replace('!\[((http|https|ftp)://[^\]]*)\]!s', '\url{$1}', $s);
+}
+
+// aeussere eckige Klammern entfernen
+// FIXME: Jahr und [Jahr] unterscheiden sich.
+//   Jahr ist das tatsaechliche Erscheinungsjahr.
+//   [Jahr] ist das Erscheinungsjahr der Ausgabe. Wie in bibtex darstellen?
+function korrBracket($s)
+{
+	return preg_replace('/^\s*\[(.*)\]\s*$/', '$1', $s);
 }
 
 function titleToKey($title)

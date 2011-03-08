@@ -18,7 +18,7 @@ $content = preg_replace('/\[\[([^]|]*)[^]]*\]\]/se', '\'\hyperlink{\'.titleToKey
 
 // external links
 // FIXME: doesn't work with [http://... Link text] style links yet
-$content = preg_replace('/\[(https?:\/\/[^\]]*)\]/s', '\footnote{\url{$1}}', $content);
+$content = preg_replace('!\[((http|https|ftp)://[^\]]*)\]!s', '\footnote{\url{$1}}', $content);
 
 $content = preg_replace('/\'\'\'([^\']*)\'\'\'/s', '\textbf{$1}', $content);
 $content = preg_replace('/\'\'([^\']*)\'\'/s', '\textsl{$1}', $content);
