@@ -3,7 +3,7 @@
 require_once('korrekturen.php');
 require_once('WikiLoader.php');
 
-function renameAndFix($fields)
+function renameAndFix($categoryname, $fields)
 {
 	$renames = array(
 		'Autor' => 'author',
@@ -35,13 +35,13 @@ function renameAndFix($fields)
 			if($renames[$key] && $val)
 				$ret[$renames[$key]] = $val;
 		} else {
-			print "Fehler, kann $key nicht uebersetzen.  Titel: ".$fields['Titel']."\n";
+			print "Fehler, kann $key nicht uebersetzen! Quelle: $categoryname\n";
 		}
 	}
 
 	// Temporaerer Fix fuer "article"-Eintraege mit "Ausgabe"
 	if(isset($ret['journal']) && isset($ret['edition'])) {
-		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Ausgabe\": {$ret['title']}\n";
+		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Ausgabe\": $categoryname\n";
 		print "WARNUNG: Temporaere Ersetzung von \"Ausgabe\" durch \"Nummer\" erfolgt.\n";
 		if(isset($ret['number'])) {
 			$ret['number'] = $ret['edition'].','.$ret['number'];
@@ -63,7 +63,7 @@ function renameAndFix($fields)
 		'editor' => array('korrBracket', 'korrAnd'),
 		'publisher' => array('korrAmpersand', 'korrDash'),
 		'pages' => array('korrBereich'),
-		'note' => array('korrLinks'),
+		'note' => array('korrStringWithLinks'),
 		'year' => array('korrBracket'),
 	);
 	foreach($korrs as $key => $korrFunctions) {
@@ -115,7 +115,7 @@ foreach($entries as $entry) {
 			$i++;
 		}
 
-		$fields = renameAndFix($fields);
+		$fields = renameAndFix($entry['title'], $fields);
 
 		if(!isset($fields['title'])) {
 			print 'Fehlender Titel: '.$entry['title']."\n";

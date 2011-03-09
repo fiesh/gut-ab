@@ -25,7 +25,7 @@ function korrBereich($s)
 	return trim(substr($ret, 0, strlen($ret)-2));
 }
 
-function korrStringWiki($s)
+function korrStringWiki($s, $doTrim=true)
 {
 	preg_match_all('/&[#\d\w]+;/s', $s, $matches);
 	$i = 0;
@@ -58,7 +58,7 @@ function korrStringWiki($s)
 			'~',
 			'−',
 		), array(
-			'\textquotedbl ',
+			'\textquotedbl{}',
 			'\&',
 			'\%',
 			'',
@@ -79,10 +79,14 @@ function korrStringWiki($s)
 		), $s);
 
 	$s = korrDash($s);
-	return trim(strip_tags($s));
+	$s = strip_tags($s);
+	if ($doTrim)
+		$s = trim($s);
+
+	return $s;
 }
 
-function korrString($s)
+function korrString($s, $doTrim=true)
 {
 	$s = str_replace(array(
 			'\\',
@@ -93,7 +97,26 @@ function korrString($s)
 			'\{',
 			'\}',
 		), $s);
-	return korrStringWiki($s);
+	return korrStringWiki($s, $doTrim);
+}
+
+// wie korrString, aber externe Links in Anmerkung mit @url umfassen
+function korrStringWithLinks($s, $doTrim=true)
+{
+	$result = '';
+	foreach(preg_split('!(\[(?:http|https|ftp)://[^\]]*\])!s', $s, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE) as $part) {
+		if(preg_match('!^\[((?:http|https|ftp)://[^\]\s]*)\s*([^\]]*)\]$!s', $part, $match)) {
+			//FIXME: wie Links mit angegebenem Linktext behandeln?
+			$result .= '\url{'.$match[1].'}';
+		} else {
+			$result .= korrString($part, false);
+		}
+	}
+
+	if ($doTrim)
+		$result = trim($result);
+
+	return $result;
 }
 
 // Grossbuchstaben in Titel und Sammlung vor bibtex schuetzen
@@ -118,12 +141,6 @@ function korrAmpersand($s)
 function korrAnd($s)
 {
 	return str_replace(',', ' and ', $s);
-}
-
-// externe Links in Anmerkung mit @url umfassen
-function korrLinks($s)
-{
-	return preg_replace('!\[((http|https|ftp)://[^\]]*)\]!s', '\url{$1}', $s);
 }
 
 // aeussere eckige Klammern entfernen
