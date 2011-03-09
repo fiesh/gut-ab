@@ -7,9 +7,9 @@ require_once('categories.php');
 require_once('korrekturen.php');
 
 $fragments = FragmentLoader::getFragments();
-$file = fopen('cache', 'w'); fwrite($file, serialize($fragments)); fclose($file);
 
-$fragments = unserialize(file_get_contents('cache'));
+#$file = fopen('cache', 'w'); fwrite($file, serialize($fragments)); fclose($file);
+#$fragments = unserialize(file_get_contents('cache'));
 
 $list = array();
 $i = 0;
@@ -18,9 +18,8 @@ foreach($fragments as $f) {
 		print "%{$f['wikiTitle']}: Ignoriere, Plagiatstyp '$f[7]'\n";
 		continue;
 	}
-	preg_match_all('/\[\[Kategorie:([^]]+)\]\]/', $f[0], $matches);
 	$found = false;
-	foreach($matches[1] as $c) {
+	foreach($f['categories'] as $c) {
 		if(in_array(titleToKey($c), $categories)) { // Quelle gefunden
 			$list[$i]['quelle'] = titleToKey($c);
 			$list[$i]['seite'] = $f[1];
@@ -41,7 +40,7 @@ foreach($fragments as $f) {
 		}
 	}
 	if(!$found) {
-		print "%XXX: {$f['wikiTitle']}: Ignoriere, keine Quelle gefunden! (Kategorien: ".implode(", ", $matches[1]).")\n";
+		print "%XXX: {$f['wikiTitle']}: Ignoriere, keine Quelle gefunden! (".implode(", ", $f['categories']).")\n";
 		continue;
 	}
 }
