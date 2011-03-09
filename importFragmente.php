@@ -1,19 +1,25 @@
 <?php
 
-$whitelist = array('KomplettPlagiat', 'Verschleierung', 'HalbsatzFlickerei', 'ShakeAndPaste', 'ÜbersetzungsPlagiat', 'StrukturPlagiat', 'BauernOpfer', 'VerschärftesBauernOpfer');
-
-require_once('FragmentLoader.php');
-require_once('categories.php');
 require_once('korrekturen.php');
 
-$fragments = FragmentLoader::getFragments();
+$whitelist = array('KomplettPlagiat', 'Verschleierung', 'HalbsatzFlickerei', 'ShakeAndPaste', 'ÜbersetzungsPlagiat', 'StrukturPlagiat', 'BauernOpfer', 'VerschärftesBauernOpfer');
 
-#$file = fopen('cache', 'w'); fwrite($file, serialize($fragments)); fclose($file);
-#$fragments = unserialize(file_get_contents('cache'));
+# Cache laden
+if(!file_exists('cache')) {
+	print "Fehler: Cache existiert nicht! 'make cache' ausgefuehrt?\n";
+	exit(1);
+}
+$cache = unserialize(file_get_contents('cache'));
+
+# Liste der Quellen erzeugen
+$categories = array();
+foreach($cache['sources'] as $source) {
+	$categories[] = titleToKey($source['title']);
+}
 
 $list = array();
 $i = 0;
-foreach($fragments as $f) {
+foreach($cache['fragments'] as $f) {
 	if(!in_array($f[7], $whitelist)) {
 		print "%{$f['wikiTitle']}: Ignoriere, Plagiatstyp '$f[7]'\n";
 		continue;

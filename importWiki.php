@@ -1,11 +1,16 @@
 <?php
 
 require_once('korrekturen.php');
-require_once('WikiLoader.php');
 
 setlocale(LC_ALL, 'de_DE');
 
-$content = WikiLoader::getRawTextByTitle('EntwurfAbschlussbericht');
+if(!file_exists('cache')) {
+	print "Fehler: Cache existiert nicht! 'make cache' ausgefuehrt?\n";
+	exit(1);
+}
+$cache = unserialize(file_get_contents('cache'));
+
+$content = $cache['static'];
 
 $content = preg_replace('/.*BEGIN_ABSCHLUSSBERICHT/s', '', $content);
 

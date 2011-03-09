@@ -1,9 +1,8 @@
 <?php
 
 require_once('korrekturen.php');
-require_once('WikiLoader.php');
 
-function renameAndFix($categoryname, $fields)
+function renameAndFix($source)
 {
 	$renames = array(
 		'Autor' => 'author',
@@ -28,14 +27,15 @@ function renameAndFix($categoryname, $fields)
 		'Anmerkung' => 'note',
 		'InLit' => false, // nicht uebernehmen
 		'InFN' => false, // nicht uebernehmen
+		'title' => false, // Wikititel nicht uebernehmen
 	);
 
-	foreach($fields as $key => $val) {
+	foreach($source as $key => $val) {
 		if(in_array($key, array_keys($renames))) {
 			if($renames[$key] && $val)
 				$ret[$renames[$key]] = $val;
 		} else {
-			print "Fehler, kann $key nicht uebersetzen! Quelle: $categoryname\n";
+			print "Fehler, kann $key nicht uebersetzen! Quelle: {$source['title']}\n";
 		}
 	}
 
@@ -52,8 +52,8 @@ function renameAndFix($categoryname, $fields)
 	}
 
 	// Tag einbauen
-	if(isset($fields['Tag']) && $fields['Tag'])
-		$ret['month'] = $fields['Tag'].'. '.$ret['month'];
+	if(isset($source['Tag']) && $source['Tag'])
+		$ret['month'] = $source['Tag'].'. '.$ret['month'];
 
 	// Weitere Korrekturen
 	$korrs = array(
@@ -90,50 +90,31 @@ function decideType($f)
 	return 'misc';
 }
 
-$pageids = WikiLoader::getCategoryMembers('Kategorie:Quelle');
-$entries = WikiLoader::getEntries($pageids, true, true);
 
-$catFile = fopen('categories.php', 'w');
-fwrite($catFile, '<?php $categories = array(');
+if(!file_exists('cache')) {
+	print "Fehler: Cache existiert nicht! 'make cache' ausgefuehrt?\n";
+	exit(1);
+}
+$cache = unserialize(file_get_contents('cache'));
 
-foreach($entries as $entry) {
-	if(preg_match('/{{Quelle/', $entry['revisions'][0]['*']) === 1) {
-		preg_match('/{{Quelle(.*)}}/s', $entry['revisions'][0]['*'], $matches);
-
-		if(!isset($matches[1])) {
-			print 'Probleme mit '.$entry['title']."\n";
-			continue;
-		}
-
-		$text = $matches[1];
-		preg_match_all('/|\s*(\w+)\s*=\s*([^|]+)/', $text, $matches);
-		$i = 0;
-		$fields = array();
-		while(isset($matches[1][$i])) {
-			if($matches[1][$i])
-				$fields[$matches[1][$i]] = trim($matches[2][$i]);
-			$i++;
-		}
-
-		$fields = renameAndFix($entry['title'], $fields);
+foreach($cache['sources'] as $source) {
+	if(count($source) >= 2) {
+		$fields = renameAndFix($source);
 
 		if(!isset($fields['title'])) {
-			print 'Fehlender Titel: '.$entry['title']."\n";
+			print 'Fehlender Titel: '.$source['title']."\n";
 			continue;
 		}
 
 		$type = decideType($fields);
 
-		echo '@'.$type.'{'.titleToKey($entry['title']).",\n";
+		echo '@'.$type.'{'.titleToKey($source['title']).",\n";
 		foreach($fields as $key => $val) {
 			echo "	$key = {".$val."},\n";
 		}
 		echo "}\n";
 
-		fwrite($catFile, '\''.titleToKey($entry['title']).'\',');
 	} else {
-		print 'XXX: Ignoriere Quelle: '.$entry['title']."\n";
+		print 'XXX: Ignoriere Quelle: '.$source['title']."\n";
 	}
 }
-fwrite($catFile, '); ?>');
-fclose($catFile);

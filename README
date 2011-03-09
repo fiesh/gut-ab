@@ -1,0 +1,44 @@
+Kurzfassung:
+
+    'make' ausfuehren, um den Abschlussbericht zu erstellen.
+
+    Software-Voraussetzungen sind
+    1. PHP 5 (im Kommandozeilen-Modus),
+    2. pdflatex und
+    3. bibtex.
+
+
+================================================================================
+
+Der Erstellungsprozess funktioniert (grob) wie folgt:
+
+1. Fragmente, Quellen und AbschlussberichtEntwurf werden aus dem Wiki
+   heruntergeladen und in der Cache-Datei (cache) zwischengespeichert
+   (buildcache.php).
+
+2. Das Literaturverzeichnis (ab.bib) wird aus dem Cache generiert
+   (bibTeXexport.php).
+
+3. Die LaTeX-Version (ab.tex) des Abschlussberichts wird aus dem Cache
+   generiert (abexport.php, importFragmente.php, importWiki.php).
+
+4. Mit pdflatex und bibtex wird aus ab.tex und ab.bib schliesslich
+   das PDF (ab.pdf) erstellt.
+
+
+'make' bzw. 'make all' fuehrt die Schritte 1 bis 4 der Reihe nach aus.
+
+'make clean' loescht alle von 'make' erzeugten Dateien (ausser 'cache').
+
+'make distclean' bzw. 'make maintainerclean' loescht alle von 'make'
+erzeugten Dateien inklusive 'cache'.
+
+'make buildcache' fuehrt Schritt 1 aus, d.h. laedt nur die aktuellen Stand
+der Datenbank aus dem Wiki herunter.
+
+'make -W cache' fuehrt die Schritte 2 bis 4 aus, erzeugt also den
+Abschlussbericht neu, ohne die Daten erneut aus dem Wiki herunterzuladen.
+Dies ist nuetzlich, wenn man Aenderungen am Code gemacht hat und keine
+Notwendigkeit besteht, den absolut neuesten Datenbestand zu verarbeiten.
+In diesem Fall ist 'make -W cache' gegenueber 'make' vorzuziehen, da so
+die Last auf die Wikia-Server drastisch reduziert wird.

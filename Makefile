@@ -1,6 +1,25 @@
 TARGET=ab
 
-all: ${TARGET}.bib ${TARGET}.tex ${TARGET}.pdf
+
+.PHONY: all buildcache clean distclean maintainerclean
+
+# If invoked as 'make' or 'make all', always rebuild 'cache' first.
+ifeq ($(MAKECMDGOALS),)
+  .PHONY: cache
+endif
+ifeq ($(MAKECMDGOALS),all)
+  .PHONY: cache
+endif
+
+
+
+all: cache ${TARGET}.bib ${TARGET}.tex ${TARGET}.pdf
+
+buildcache:
+	@php buildcache.php
+
+cache:
+	@php buildcache.php
 
 ${TARGET}.pdf: ${TARGET}.bbl ${TARGET}.tex
 	@pdflatex -interaction=nonstopmode ${TARGET}.tex
@@ -12,10 +31,10 @@ ${TARGET}.bbl: ${TARGET}.bib ${TARGET}.tex
 	@pdflatex -interaction=nonstopmode ${TARGET}.tex
 	@pdflatex -interaction=nonstopmode ${TARGET}.tex
 
-${TARGET}.tex::
+${TARGET}.tex: cache
 	@php abexport.php > ${TARGET}.tex
 
-${TARGET}.bib::
+${TARGET}.bib: cache
 	@php bibTeXexport.php > ${TARGET}.bib
 
 clean:
@@ -30,4 +49,12 @@ clean:
 	@rm -f ${TARGET}.ind
 	@rm -f ${TARGET}.thm
 	@rm -f ${TARGET}.out
+	@rm -f ${TARGET}.tex
+	@rm -f ${TARGET}.bib
+	@rm -f ${TARGET}.pdf
 	@rm -f texput.log
+
+distclean: clean
+	@rm -f cache
+
+maintainerclean: distclean
