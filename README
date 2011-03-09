@@ -33,7 +33,7 @@ Der Erstellungsprozess funktioniert (grob) wie folgt:
 'make distclean' bzw. 'make maintainerclean' loescht alle von 'make'
 erzeugten Dateien inklusive 'cache'.
 
-'make buildcache' fuehrt Schritt 1 aus, d.h. laedt nur die aktuellen Stand
+'make buildcache' fuehrt Schritt 1 aus, d.h. laedt nur den aktuellen Stand
 der Datenbank aus dem Wiki herunter.
 
 'make -W cache' fuehrt die Schritte 2 bis 4 aus, erzeugt also den
