@@ -59,6 +59,6 @@
 \section{Textnachweise}
 
 <?php require_once('importFragmente.php'); ?>
-\bibliographystyle{dinat}
+\bibliographystyle{dinat-custom}
 \bibliography{ab}
 \end{document}
