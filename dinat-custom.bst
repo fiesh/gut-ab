@@ -731,12 +731,9 @@ FUNCTION {push.authors.editors.copyeds}
     { push.editors.copyeds }
     { push.authors
       editor empty$
-        { copyed empty$
-            { skip$ }
-            { "~; " * push.editors.copyeds * 
-            }
-          if$
-        }
+      copyed empty$
+      and
+        { skip$ }
         { "~; " * push.editors.copyeds * 
         }
       if$
@@ -1030,8 +1027,10 @@ FUNCTION {push.in.ed.booktitle}
     { "" }
     { push.in " " * 
       editor empty$
+      copyed empty$
+      and
         { skip$ }
-        { push.editors * ": " * }
+        { push.editors.copyeds * ": " * }
       if$
       booktitle format.emphasize * 
       volume empty$
@@ -1216,7 +1215,7 @@ FUNCTION {book}
 % conference see below
 
 FUNCTION {inbook}
-% required: author/editor, title, chapter/pages, publisher, year
+% required: author/editor/copyed, title, chapter/pages, publisher, year
 % optional: volume oder number, series, type, address, month, note, url, isbn
 { out.bibitem.start
   author empty$
@@ -1263,7 +1262,7 @@ FUNCTION {inbook}
 
 FUNCTION {incollection}
 % required: author, title, booktitle, publisher, year
-% optional: editor, volume oder number, series, type, chapter, 
+% optional: editor, copyed, volume oder number, series, type, chapter, 
 %           pages, address, edition, month, note, url
 { out.bibitem.start
   push.authors "author" out.check.required
@@ -1301,7 +1300,7 @@ FUNCTION {incollection}
 
 FUNCTION {inproceedings}
 % required: author, title, booktitle, year
-% optional: editor, volume oder number, series, pages, address, month, 
+% optional: editor, copyed, volume oder number, series, pages, address, month, 
 %           organization, publisher, note, url
 { out.bibitem.start
   push.authors "author" out.check.required
