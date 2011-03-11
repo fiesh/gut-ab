@@ -143,6 +143,12 @@ function korrAnd($s)
 	return str_replace(',', ' and ', $s);
 }
 
+// u.a. durch and others ersetzen in den Autoren
+function korrEtAl($s)
+{
+	return preg_replace('/\[\s*u\.\s*a\.\s*\]\s*$|u\.\s*a\.\s*$/', ' and others', $s);
+}
+
 // aeussere eckige Klammern entfernen
 // FIXME: Jahr und [Jahr] unterscheiden sich.
 //   Jahr ist das tatsaechliche Erscheinungsjahr.

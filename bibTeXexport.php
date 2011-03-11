@@ -2,8 +2,40 @@
 
 require_once('korrekturen.php');
 
+function splitBeteiligte($peopleString)
+{
+	// split $peopleString at commas, but ignore commas within (), [] or {}
+	$peeps = array();
+	$depth = 0;
+	$startpos = 0;
+	$len = strlen($peopleString);
+	for($i = 0; $i <= $len; ++$i) {  // kein off-by-one
+		$c = ($i < $len) ? @$peopleString[$i] : false;
+		if($i == $len || ($c == ',' && $depth <= 0)) {
+			$part = trim(substr($peopleString, $startpos, $i-$startpos));
+			var_dump($part);
+			if(preg_match('/^(.*)\[([^(]*)\]$/', $part, $match) ||
+			   preg_match('/^(.*)\(([^(]*)\)$/', $part, $match)) {
+				$name = trim($match[1]);
+				$occupation = trim($match[2]);
+				$peeps[] = array($name, $occupation);
+			} else if(!empty($part)) {
+				$peeps[] = array($part, '');
+			}
+
+			$startpos = $i+1;
+		} else if($c == '(' || $c == '[' || $c == '{') {
+			++$depth;
+		} else if($c == ')' || $c == ']' || $c == '}') {
+			--$depth;
+		}
+	}
+	return $peeps;
+}
+
 function renameAndFix($source)
 {
+/*
 	if($source['title'] == 'Kategorie:Adams 1992') {
 		$source['Hrsg'] = 'Willi Paul Adams';
 		$source['Redakteur'] = 'Holger Ehmke';
@@ -21,7 +53,15 @@ function renameAndFix($source)
 		$source['Hrsg'] = '{U.S. Diplomatic Mission to Germany}';
 	} else if($source['title'] == 'Kategorie:U.S. Diplomatic Mission to Germany 2004') {
 		$source['Hrsg'] = '{U.S. Diplomatic Mission to Germany}';
+	} else if($source['title'] == 'Kategorie:Wasser 1997') {
+		$source['Hrsg'] = '{Bundeszentrale für politische Bildung}';
+	#	$source['Beteiligte'] = '
 	}
+*/
+	/*if(@preg_match('/[\(\[\]\)]/', $source['Hrsg'])
+	 ||@preg_match('/[\(\[\]\)]/', $source['Autor'])) {
+		print "YYY: ".$source['title']."\n";
+	}*/
 
 	// bei inkompatiblen Eintraegen warnen
 	$categoryname = $source['title'];
@@ -30,9 +70,9 @@ function renameAndFix($source)
 	if(!isset($source['Jahr']))
 		print "WARNUNG: Quelle ohne \"Jahr\": $categoryname\n";
 	if(isset($source['Zeitschrift']) && isset($source['Verlag']))
-		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Verlag\": $categoryname\n";
+		//print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Verlag\": $categoryname\n";
 	if(isset($source['Zeitschrift']) && isset($source['Ort']))
-		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Ort\": $categoryname\n";
+		//print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Ort\": $categoryname\n";
 	if(isset($source['Zeitschrift']) && isset($source['Reihe']))
 		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Reihe\": $categoryname\n";
 	if(isset($source['Zeitschrift']) && isset($source['Ausgabe']))
@@ -40,9 +80,9 @@ function renameAndFix($source)
 	if(isset($source['Zeitschrift']) && isset($source['Sammlung']))
 		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Sammlung\": $categoryname\n";
 	if(isset($source['Zeitschrift']) && isset($source['Hrsg']))
-		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Hrsg\": $categoryname\n";
-	if(isset($source['Zeitschrift']) && isset($source['Redakteur']))
-		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Redakteur\": $categoryname\n";
+		//print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Hrsg\": $categoryname\n";
+	if(isset($source['Zeitschrift']) && isset($source['Beteiligte']))
+		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Beteiligte\": $categoryname\n";
 	if(isset($source['Zeitschrift']) && isset($source['ISBN']))
 		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"ISBN\": $categoryname\n";
 	if(!isset($source['Zeitschrift']) && isset($source['ISSN']))
@@ -64,7 +104,7 @@ function renameAndFix($source)
 		'Ausgabe' => 'edition',
 		'Sammlung' => 'booktitle',
 		'Hrsg' => 'editor',
-		'Redakteur' => 'copyed',
+		'Beteiligte' => false, // wird unten speziell behandelt
 		'Seiten' => 'pages',
 		'ISBN' => 'isbn',
 		'ISSN' => 'issn',
@@ -89,6 +129,20 @@ function renameAndFix($source)
 	if(isset($source['Tag']) && $source['Tag'])
 		$ret['month'] = $source['Tag'].'. '.$ret['month'];
 
+	// Beteiligte einbauen
+	$maxBeteiligte = 5;  // Bei Aenderungen mit dinat-custom.bst abstimmen
+	if(isset($source['Beteiligte'])) {
+		foreach(splitBeteiligte($source['Beteiligte']) as $i => $peep) {
+			if($i >= $maxBeteiligte) {
+				print "WARNUNG: $categoryname hat mehr als $maxBeteiligte Beteiligte!\n";
+				break;
+			}
+
+			$ret["involved$i"] = korrBracket($peep[0]);
+			$ret["involvedoccupation$i"] = $peep[1];
+		}
+	}
+
 	// bibtex erzeugt doppelten Punkt falls note und isbn/issn definiert
 	// durch entfernen eines Punkts beheben
 	if(isset($ret['note'])) {
@@ -102,9 +156,8 @@ function renameAndFix($source)
 	$korrs = array(
 		'title' => array('korrString', 'korrVersalien', 'korrDash'),
 		'booktitle' => array('korrString', 'korrVersalien'),
-		'author' => array('korrBracket', 'korrAnd'),
-		'editor' => array('korrBracket', 'korrAnd'),
-		'copyed' => array('korrBracket', 'korrAnd'),
+		'author' => array('korrBracket', 'korrAnd', 'korrEtAl'),
+		'editor' => array('korrBracket', 'korrAnd', 'korrEtAl'),
 		'publisher' => array('korrAmpersand', 'korrDash'),
 		'pages' => array('korrBereich'),
 		'note' => array('korrStringWithLinks'),
