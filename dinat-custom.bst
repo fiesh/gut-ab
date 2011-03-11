@@ -3,7 +3,8 @@
 %% custom modifications (c) kahrl   email:kahrl@mailinator.com
 %%------------------------------------------------------------------------------
 %% This is DINAT.BST with a few custom modifications:
-%% 1. @book: add a copyed field (German: Redakteur), similar to editor,
+%% 1. @book, @inbook, @incollection, @inproceedings:
+%%    add a copyed field which behaves similar to editor,
 %%    shows up as LAST NAME, First Name (Red.)
 %%------------------------------------------------------------------------------
 %% For use with BibTeX version 0.99a or later.
