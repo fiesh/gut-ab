@@ -2,10 +2,13 @@
 %% DINAT.BST (c) Helge Baumann   email:Helge.Baumann@gmx.de
 %% custom modifications (c) kahrl   email:kahrl@mailinator.com
 %%------------------------------------------------------------------------------
-%% This is DINAT.BST with a few custom modifications:
-%% 1. @book, @inbook, @incollection, @inproceedings:
-%%    add a copyed field which behaves similar to editor,
-%%    shows up as LAST NAME, First Name (Red.)
+%% This is DINAT.BST with a custom modification:
+%%    @book, @inbook, @incollection, @inproceedings:
+%%    add involved0..4 fields which behave similar to editor,
+%%    but which have a modifiable tag (instead of Hrsg.) which can be set
+%%    using involvedoccupation0..4.
+%% Caveat:
+%%    If involvedN is nonempty, involved(N-1) must be nonempty too.
 %%------------------------------------------------------------------------------
 %% For use with BibTeX version 0.99a or later.
 %%------------------------------------------------------------------------------
@@ -145,11 +148,20 @@ ENTRY
     author
     booktitle
     chapter
-    copyed
     edition
     editor
     howpublished
     institution
+    involved0
+    involved1
+    involved2
+    involved3
+    involved4
+    involvedoccupation0
+    involvedoccupation1
+    involvedoccupation2
+    involvedoccupation3
+    involvedoccupation4
     isbn
     issn
     journal
@@ -690,24 +702,63 @@ FUNCTION {push.editors}
   if$
 } 
 
-FUNCTION {push.copyeds}
-% format copyed names
-{ copyed empty$
-    { "" } 
-    { " (" push.red * ")" * 'hrsg := 
-      copyed format.names
+STRINGS { invname invoccupation }
+
+FUNCTION {check.involved}
+% replace top of stack with "" if missing
+{ duplicate$ missing$
+    { pop$ "" }
+    { }
+  if$
+}
+
+FUNCTION {push.involved.first}
+% format first involved name
+{ check.involved 'invoccupation :=
+  check.involved 'invname :=
+  invname empty$
+    { "" }
+    { invoccupation empty$
+        {}
+        { " (" invoccupation * ")" * 'hrsg := }
+      if$
+      invname format.names
     }
   if$
-} 
+}
 
-FUNCTION {push.editors.copyeds}
-% format editor and/or copyed names
+FUNCTION {push.involved.nonfirst}
+% format second, third, ... involved name
+{ check.involved 'invoccupation :=
+  check.involved 'invname :=
+  invname empty$
+    { "" }
+    { invoccupation empty$
+        {}
+        { " (" invoccupation * ")" * 'hrsg := }
+      if$
+      "~; " invname format.names *
+    }
+  if$
+}
+
+FUNCTION {push.involved}
+% format involved names
+{ involved0 involvedoccupation0 push.involved.first
+  involved1 involvedoccupation1 push.involved.nonfirst *
+  involved2 involvedoccupation2 push.involved.nonfirst *
+  involved3 involvedoccupation3 push.involved.nonfirst *
+  involved4 involvedoccupation4 push.involved.nonfirst *
+}
+
+FUNCTION {push.editors.involved}
+% format editor and/or involved names
 { editor empty$
-    { push.copyeds } 
+    { push.involved } 
     { push.editors
-      copyed empty$
+      involved0 empty$
         { skip$ }
-        { "~; " * push.copyeds * }
+        { "~; " * push.involved * }
       if$
     }
   if$
@@ -726,16 +777,16 @@ FUNCTION {push.authors.editors}
   if$
 }
 
-FUNCTION {push.authors.editors.copyeds}
-% format author, editor and/or copyed names
+FUNCTION {push.authors.editors.involved}
+% format author, editor and/or involved names
 { author empty$
-    { push.editors.copyeds }
+    { push.editors.involved }
     { push.authors
       editor empty$
-      copyed empty$
+      involved0 empty$
       and
         { skip$ }
-        { "~; " * push.editors.copyeds * 
+        { "~; " * push.editors.involved * 
         }
       if$
     }
@@ -1028,10 +1079,10 @@ FUNCTION {push.in.ed.booktitle}
     { "" }
     { push.in " " * 
       editor empty$
-      copyed empty$
+      involved0 empty$
       and
         { skip$ }
-        { push.editors.copyeds * ": " * }
+        { push.editors.involved * ": " * }
       if$
       booktitle format.emphasize * 
       volume empty$
@@ -1173,13 +1224,13 @@ FUNCTION {article}
 }
 
 FUNCTION {book}
-% required: author/editor/copyed, title, publisher, year
-% optional: volume oder number, series, address, edition, pages, month, 
-%           note, url, isbn
+% required: author/editor/involvedN, title, publisher, year
+% optional: involvedoccupationN, volume oder number, series, address, edition,
+%           pages, month, note, url, isbn
 { out.bibitem.start
   author empty$
-    { push.editors.copyeds "author, editor and copyed" out.check.required }
-    { push.authors.editors.copyeds out.block }
+    { push.editors.involved "author, editor and involved0" out.check.required }
+    { push.authors.editors.involved out.block }
   if$
   set.colon.after
   crossref missing$
@@ -1216,8 +1267,9 @@ FUNCTION {book}
 % conference see below
 
 FUNCTION {inbook}
-% required: author/editor/copyed, title, chapter/pages, publisher, year
-% optional: volume oder number, series, type, address, month, note, url, isbn
+% required: author/editor/involvedN, title, chapter/pages, publisher, year
+% optional: involvedoccupationN, volume oder number, series, type, address,
+%           month, note, url, isbn
 { out.bibitem.start
   author empty$
     { push.editors "author and editor" out.check.required }
@@ -1263,8 +1315,8 @@ FUNCTION {inbook}
 
 FUNCTION {incollection}
 % required: author, title, booktitle, publisher, year
-% optional: editor, copyed, volume oder number, series, type, chapter, 
-%           pages, address, edition, month, note, url
+% optional: editor, involvedN, involvedoccupationN, volume oder number, series,
+%           type, chapter, pages, address, edition, month, note, url
 { out.bibitem.start
   push.authors "author" out.check.required
   set.colon.after
@@ -1301,8 +1353,8 @@ FUNCTION {incollection}
 
 FUNCTION {inproceedings}
 % required: author, title, booktitle, year
-% optional: editor, copyed, volume oder number, series, pages, address, month, 
-%           organization, publisher, note, url
+% optional: editor, involvedN, involvedoccupationN, volume oder number, series,
+%           pages, address, month, organization, publisher, note, url
 { out.bibitem.start
   push.authors "author" out.check.required
   set.colon.after

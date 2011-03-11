@@ -13,7 +13,6 @@ function splitBeteiligte($peopleString)
 		$c = ($i < $len) ? @$peopleString[$i] : false;
 		if($i == $len || ($c == ',' && $depth <= 0)) {
 			$part = trim(substr($peopleString, $startpos, $i-$startpos));
-			var_dump($part);
 			if(preg_match('/^(.*)\[([^(]*)\]$/', $part, $match) ||
 			   preg_match('/^(.*)\(([^(]*)\)$/', $part, $match)) {
 				$name = trim($match[1]);
@@ -35,34 +34,6 @@ function splitBeteiligte($peopleString)
 
 function renameAndFix($source)
 {
-/*
-	if($source['title'] == 'Kategorie:Adams 1992') {
-		$source['Hrsg'] = 'Willi Paul Adams';
-		$source['Redakteur'] = 'Holger Ehmke';
-	} else if($source['title'] == 'Kategorie:Shell 1992') {
-		$source['Hrsg'] = 'Willi Paul Adams';
-		$source['Redakteur'] = 'Holger Ehmke';
-	} else if($source['title'] == 'Kategorie:LZB NDS 2004') {
-		$source['Hrsg'] = '{Niedersächsische Landeszentrale für politische Bildung}';
-		$source['Schluessel'] = 'LZB NDS';
-	} else if($source['title'] == 'Kategorie:Examen Europaeum Consortium o.J.') {
-		$source['Hrsg'] = '{Examen Europaeum Consortium}';
-	} else if($source['title'] == 'Kategorie:CRS Annotated Constitution 1992') {
-		$source['Hrsg'] = '{Congressional Research Service}';
-	} else if($source['title'] == 'Kategorie:U.S. Diplomatic Mission to Germany') {
-		$source['Hrsg'] = '{U.S. Diplomatic Mission to Germany}';
-	} else if($source['title'] == 'Kategorie:U.S. Diplomatic Mission to Germany 2004') {
-		$source['Hrsg'] = '{U.S. Diplomatic Mission to Germany}';
-	} else if($source['title'] == 'Kategorie:Wasser 1997') {
-		$source['Hrsg'] = '{Bundeszentrale für politische Bildung}';
-	#	$source['Beteiligte'] = '
-	}
-*/
-	/*if(@preg_match('/[\(\[\]\)]/', $source['Hrsg'])
-	 ||@preg_match('/[\(\[\]\)]/', $source['Autor'])) {
-		print "YYY: ".$source['title']."\n";
-	}*/
-
 	// bei inkompatiblen Eintraegen warnen
 	$categoryname = $source['title'];
 	if(!isset($source['Titel']))
