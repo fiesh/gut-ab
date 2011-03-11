@@ -23,6 +23,7 @@
 
 require_once('WikiLoader.php');
 require_once('FragmentLoader.php');
+require_once('BibliographyLoader.php');
 
 $cache = array();
 
@@ -33,30 +34,7 @@ print "fertig!\n";
 
 # Quellen laden
 print "Lade Quellen... "; flush();
-$pageids = WikiLoader::getCategoryMembers('Kategorie:Quelle');
-$entries = WikiLoader::getEntries($pageids, true, true);
-print "fertig!\n";
-
-# Quellen verarbeiten
-print "Verarbeite Quellen... "; flush();
-$cache['sources'] = array();
-foreach($entries as $entry) {
-	$source = array('title' => $entry['title']);
-
-	if(preg_match_all('/{{Quelle(.*)}}/s', $entry['revisions'][0]['*'], $matches) === 1) {
-		$text = $matches[1][0];
-		preg_match_all('/|\s*(\w+)\s*=\s*([^|]+)/', $text, $matches);
-		$i = 0;
-		$fields = array();
-		while(isset($matches[1][$i])) {
-			if($matches[1][$i])
-				$source[$matches[1][$i]] = trim($matches[2][$i]);
-			$i++;
-		}
-	}
-
-	$cache['sources'][] = $source;
-}
+$cache['sources'] = BibliographyLoader::getSources();
 print "fertig!\n";
 
 # Entwurf laden
