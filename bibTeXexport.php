@@ -47,8 +47,6 @@ function renameAndFix($source)
 		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"ISBN\": $categoryname\n";
 	if(!isset($source['Zeitschrift']) && isset($source['ISSN']))
 		print "WARNUNG: Quelle ohne \"Zeitschrift\", aber mit \"ISSN\": $categoryname\n";
-	if(!isset($source['Zeitschrift']) && !isset($source['Verlag']))
-		print "WARNUNG: Quelle ohne \"Zeitschrift\" und \"Verlag\": $categoryname\n";
 
 
 	$renames = array(
