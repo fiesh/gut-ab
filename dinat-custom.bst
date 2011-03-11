@@ -2,13 +2,15 @@
 %% DINAT.BST (c) Helge Baumann   email:Helge.Baumann@gmx.de
 %% custom modifications (c) kahrl   email:kahrl@mailinator.com
 %%------------------------------------------------------------------------------
-%% This is DINAT.BST with a custom modification:
-%%    @book, @inbook, @incollection, @inproceedings:
+%% This is DINAT.BST with custom modifications:
+%% 1. @book, @inbook, @incollection, @inproceedings:
 %%    add involved0..4 fields which behave similar to editor,
 %%    but which have a modifiable tag (instead of Hrsg.) which can be set
 %%    using involvedoccupation0..4.
 %% Caveat:
 %%    If involvedN is nonempty, involved(N-1) must be nonempty too.
+%% 2. @article, @book, @inbook, @incollection, @inproceedings and @misc support
+%%    the inlit field which is appended verbatim at the end.
 %%------------------------------------------------------------------------------
 %% For use with BibTeX version 0.99a or later.
 %%------------------------------------------------------------------------------
@@ -151,6 +153,7 @@ ENTRY
     edition
     editor
     howpublished
+    inlit
     institution
     involved0
     involved1
@@ -1220,6 +1223,8 @@ FUNCTION {article}
   note out
   issn set.period.dash.check
   push.isbn.issn out
+  inlit set.period.dash.check
+  inlit out
   out.bibitem.end
 }
 
@@ -1259,6 +1264,8 @@ FUNCTION {book}
   note out 
   isbn set.period.dash.check
   push.isbn.issn out
+  inlit set.period.dash.check
+  inlit out
   out.bibitem.end
 }
 
@@ -1310,6 +1317,8 @@ FUNCTION {inbook}
   note out 
   isbn set.period.dash.check
   push.isbn.issn out
+  inlit set.period.dash.check
+  inlit out
   out.bibitem.end
 }
 
@@ -1348,6 +1357,8 @@ FUNCTION {incollection}
   isbn set.period.dash.check
   issn set.period.dash.check
   push.isbn.issn out
+  inlit set.period.dash.check
+  inlit out
   out.bibitem.end
 }
 
@@ -1395,6 +1406,8 @@ FUNCTION {inproceedings}
   isbn set.period.dash.check
   issn set.period.dash.check
   push.isbn.issn out
+  inlit set.period.dash.check
+  inlit out
   out.bibitem.end
 }
 
@@ -1523,6 +1536,8 @@ FUNCTION {misc}
       if$
     }
   if$
+  inlit set.period.dash.check
+  inlit out
   out.bibitem.end
 }
 

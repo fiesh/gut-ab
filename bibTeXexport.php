@@ -114,13 +114,19 @@ function renameAndFix($source)
 		}
 	}
 
-	// bibtex erzeugt doppelten Punkt falls note und isbn/issn definiert
+	// inLit/inFN einbauen
+	if(isset($source['InLit']) && $source['InLit'] === 'ja') {
+		$ret['inlit'] = 'Angabe im Literaturverzeichnis.';
+	} else if(isset($source['InFN']) && $source['InFN'] === 'ja') {
+		$ret['inlit'] = 'Angabe in Fu\ss{}noten.';
+	} else {
+		$ret['inlit'] = 'Nicht angegeben.';
+	}
+
+	// bibtex erzeugt doppelten Punkt falls note definiert
 	// durch entfernen eines Punkts beheben
 	if(isset($ret['note'])) {
-		$ret['note'] = rtrim($ret['note']);
-		if(isset($ret['isbn']) || isset($ret['issn'])) {
-			$ret['note'] = preg_replace('/\.$/', '', $ret['note']);
-		}
+		$ret['note'] = preg_replace('/\.$/', '', rtrim($ret['note']));
 	}
 
 	// Weitere Korrekturen
