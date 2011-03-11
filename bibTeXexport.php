@@ -4,26 +4,74 @@ require_once('korrekturen.php');
 
 function renameAndFix($source)
 {
+	if($source['title'] == 'Kategorie:Adams 1992') {
+		$source['Hrsg'] = 'Willi Paul Adams';
+		$source['Redakteur'] = 'Holger Ehmke';
+	} else if($source['title'] == 'Kategorie:Shell 1992') {
+		$source['Hrsg'] = 'Willi Paul Adams';
+		$source['Redakteur'] = 'Holger Ehmke';
+	} else if($source['title'] == 'Kategorie:LZB NDS 2004') {
+		$source['Hrsg'] = '{Niedersächsische Landeszentrale für politische Bildung}';
+		$source['Schluessel'] = 'LZB NDS';
+	} else if($source['title'] == 'Kategorie:Examen Europaeum Consortium o.J.') {
+		$source['Hrsg'] = '{Examen Europaeum Consortium}';
+	} else if($source['title'] == 'Kategorie:CRS Annotated Constitution 1992') {
+		$source['Hrsg'] = '{Congressional Research Service}';
+	} else if($source['title'] == 'Kategorie:U.S. Diplomatic Mission to Germany') {
+		$source['Hrsg'] = '{U.S. Diplomatic Mission to Germany}';
+	} else if($source['title'] == 'Kategorie:U.S. Diplomatic Mission to Germany 2004') {
+		$source['Hrsg'] = '{U.S. Diplomatic Mission to Germany}';
+	}
+
+	// bei inkompatiblen Eintraegen warnen
+	$categoryname = $source['title'];
+	if(!isset($source['Titel']))
+		print "WARNUNG: Quelle ohne \"Titel\": $categoryname\n";
+	if(!isset($source['Jahr']))
+		print "WARNUNG: Quelle ohne \"Jahr\": $categoryname\n";
+	if(isset($source['Zeitschrift']) && isset($source['Verlag']))
+		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Verlag\": $categoryname\n";
+	if(isset($source['Zeitschrift']) && isset($source['Ort']))
+		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Ort\": $categoryname\n";
+	if(isset($source['Zeitschrift']) && isset($source['Reihe']))
+		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Reihe\": $categoryname\n";
+	if(isset($source['Zeitschrift']) && isset($source['Ausgabe']))
+		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Ausgabe\": $categoryname\n";
+	if(isset($source['Zeitschrift']) && isset($source['Sammlung']))
+		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Sammlung\": $categoryname\n";
+	if(isset($source['Zeitschrift']) && isset($source['Hrsg']))
+		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Hrsg\": $categoryname\n";
+	if(isset($source['Zeitschrift']) && isset($source['Redakteur']))
+		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Redakteur\": $categoryname\n";
+	if(isset($source['Zeitschrift']) && isset($source['ISBN']))
+		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"ISBN\": $categoryname\n";
+	if(!isset($source['Zeitschrift']) && isset($source['ISSN']))
+		print "WARNUNG: Quelle ohne \"Zeitschrift\", aber mit \"ISSN\": $categoryname\n";
+	if(!isset($source['Zeitschrift']) && !isset($source['Verlag']))
+		print "WARNUNG: Quelle ohne \"Zeitschrift\" und \"Verlag\": $categoryname\n";
+
+
 	$renames = array(
 		'Autor' => 'author',
-		'Hrsg' => 'editor',
 		'Titel' => 'title',
-		'Verlag' => 'publisher',
-		'Zeitschrift' => 'journal',
-		'Sammlung' => 'booktitle',
-		'Reihe' => 'series',
-		'Ort' => 'address',
 		'Jahr' => 'year',
 		'Monat' => 'month',
-		'Tag' => FALSE, // Wird mit in Monat eingebaut
-		'Ausgabe' => 'edition',
+		'Tag' => false, // Wird mit in Monat eingebaut
+		'Zeitschrift' => 'journal',
 		'Jahrgang' => 'volume',
 		'Nummer' => 'number',
+		'Verlag' => 'publisher',
+		'Ort' => 'address',
+		'Reihe' => 'series',
+		'Ausgabe' => 'edition',
+		'Sammlung' => 'booktitle',
+		'Hrsg' => 'editor',
+		'Redakteur' => 'copyed',
 		'Seiten' => 'pages',
-		'Schluessel' => 'key',
-		'URL' => 'url',
 		'ISBN' => 'ISBN',
 		'ISSN' => 'ISSN',
+		'URL' => 'url',
+		'Schluessel' => 'key',
 		'Anmerkung' => 'note',
 		'InLit' => false, // nicht uebernehmen
 		'InFN' => false, // nicht uebernehmen
@@ -39,18 +87,6 @@ function renameAndFix($source)
 		}
 	}
 
-	// Temporaerer Fix fuer "article"-Eintraege mit "Ausgabe"
-	if(isset($ret['journal']) && isset($ret['edition'])) {
-		print "WARNUNG: Quelle mit \"Zeitschrift\" und \"Ausgabe\": $categoryname\n";
-		print "WARNUNG: Temporaere Ersetzung von \"Ausgabe\" durch \"Nummer\" erfolgt.\n";
-		if(isset($ret['number'])) {
-			$ret['number'] = $ret['edition'].','.$ret['number'];
-		} else {
-			$ret['number'] = $ret['edition'];
-		}
-		unset($ret['edition']);
-	}
-
 	// Tag einbauen
 	if(isset($source['Tag']) && $source['Tag'])
 		$ret['month'] = $source['Tag'].'. '.$ret['month'];
@@ -61,6 +97,7 @@ function renameAndFix($source)
 		'booktitle' => array('korrString', 'korrVersalien'),
 		'author' => array('korrBracket', 'korrAnd'),
 		'editor' => array('korrBracket', 'korrAnd'),
+		'copyed' => array('korrBracket', 'korrAnd'),
 		'publisher' => array('korrAmpersand', 'korrDash'),
 		'pages' => array('korrBereich'),
 		'note' => array('korrStringWithLinks'),
