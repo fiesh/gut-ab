@@ -66,8 +66,8 @@ function renameAndFix($source)
 		'Hrsg' => 'editor',
 		'Redakteur' => 'copyed',
 		'Seiten' => 'pages',
-		'ISBN' => 'ISBN',
-		'ISSN' => 'ISSN',
+		'ISBN' => 'isbn',
+		'ISSN' => 'issn',
 		'URL' => 'url',
 		'Schluessel' => 'key',
 		'Anmerkung' => 'note',
@@ -88,6 +88,15 @@ function renameAndFix($source)
 	// Tag einbauen
 	if(isset($source['Tag']) && $source['Tag'])
 		$ret['month'] = $source['Tag'].'. '.$ret['month'];
+
+	// bibtex erzeugt doppelten Punkt falls note und isbn/issn definiert
+	// durch entfernen eines Punkts beheben
+	if(isset($ret['note'])) {
+		$ret['note'] = rtrim($ret['note']);
+		if(isset($ret['isbn']) || isset($ret['issn'])) {
+			$ret['note'] = preg_replace('/\.$/', '', $ret['note']);
+		}
+	}
 
 	// Weitere Korrekturen
 	$korrs = array(
