@@ -1,4 +1,4 @@
-\documentclass[ngerman,final,fontsize=12pt,paper=a4,twoside,toc=bibliography,BCOR=8mm,draft=false]{scrartcl}
+\documentclass[ngerman,final,fontsize=12pt,paper=a4,twoside,toc=bibliography,bibtotoc,BCOR=8mm,draft=false]{scrartcl}
 
 \usepackage[T1]{fontenc}
 \usepackage{babel}
@@ -55,10 +55,13 @@
 
 <?php require_once('importWiki.php'); ?>
 
+\newpage~\newpage
 \appendix
 \section{Textnachweise}
 
 <?php require_once('importFragmente.php'); ?>
+\renewcommand{\refname}{Quellenverzeichnis}
+\newpage
 \bibliographystyle{dinat-custom}
 \bibliography{ab}
 \end{document}
