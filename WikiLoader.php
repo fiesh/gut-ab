@@ -49,7 +49,7 @@ class WikiLoader {
 	// Returns page data (given page titles) in unserialized format.
 	static private function queryEntriesByTitles($titles)
 	{
-		return unserialize(file_get_contents(self::API.'?action=query&prop=revisions&rvprop=content&format=php&titles='.urlencode(implode('|', $titles))));
+		return unserialize(file_get_contents(self::API.'?action=query&prop=info%7Crevisions%7Ccategories&rvprop=content&cllimit=max&format=php&titles='.urlencode(implode('|', $titles))));
 	}
 
 
