@@ -1,8 +1,8 @@
-%% DINAT-CUSTOM.BST   Version 2.5   2000-11-14 
+%% DINAT-CUSTOM.BST   Version 2.5.1   2011-03-13
 %% DINAT.BST (c) Helge Baumann   email:Helge.Baumann@gmx.de
 %% custom modifications (c) kahrl   email:kahrl@mailinator.com
 %%------------------------------------------------------------------------------
-%% This is DINAT.BST with custom modifications:
+%% This is DINAT.BST (v. 2.5, 2000-11-14) with custom modifications:
 %% 1. @book, @inbook, @incollection, @inproceedings:
 %%    add involved0..4 fields which behave similar to editor,
 %%    but which have a modifiable tag (instead of Hrsg.) which can be set
