@@ -74,6 +74,17 @@ class FragmentLoader {
 		return self::processFrags($fragmentEntries);
 	}
 
+	static private function parseFragmentType($rawText)
+	{
+		$fragtype = array();
+		if(preg_match('/<!--\s*prioritaet\s*=\s*(-?\s*\d+)/si', $rawText, $match)) {
+			$fragtype['priority'] = (int) preg_replace('/\s/', '', $match[1]);
+		} else {
+			$fragtype['priority'] = 0;
+		}
+		return $fragtype;
+	}
+
 	static public function getFragmentTypes()
 	{
 		$pageids = WikiLoader::getCategoryMembers('Kategorie:PlagiatsKategorien');
@@ -81,9 +92,26 @@ class FragmentLoader {
 
 		$fragtypes = array();
 		foreach($entries as $entry) {
-			if (substr($entry['title'], 0, 10) == 'Kategorie:')
-				$fragtypes[] = $entry['title'];
+			if (substr($entry['title'], 0, 10) == 'Kategorie:') {
+				$fragtype = self::parseFragmentType($entry['revisions'][0]['*']);
+				$fragtype['title'] = $entry['title'];
+				$fragtypes[] = $fragtype;
+			}
 		}
+		usort($fragtypes, 'fragmentLoaderTypePriorityCmp');
 		return $fragtypes;
+	}
+
+}
+
+// these functions have to be defined outside of the class --
+// they are used as callbacks
+function fragmentLoaderTypePriorityCmp($fragtype1, $fragtype2) {
+	if($fragtype1['priority'] < $fragtype2['priority']) {
+		return -1;
+	} else if($fragtype1['priority'] > $fragtype2['priority']) {
+		return 1;
+	} else {
+		return strcmp($fragtype1['title'], $fragtype2['title']);
 	}
 }

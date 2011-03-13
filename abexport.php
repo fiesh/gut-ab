@@ -40,10 +40,16 @@
 	\indent\textbf{Original #6}\nopagebreak\\\nopagebreak%
 	#5\\%
 	\end{snugshade}}
+\newcommand{\fragmentInFN}[6]{\begin{snugshade}%
+	\indent\textbf{Dissertation S.~#1 Z.~#2}\nopagebreak\\\nopagebreak%
+	#4\\%
+	\indent\textbf{Original #6 (Nur in Fu\ss{}note, aber \emph{nicht} im Literaturverzeichnis angef\"uhrt!)}\nopagebreak\\\nopagebreak%
+	#5\\%
+	\end{snugshade}}
 \newcommand{\fragmentNichtLit}[6]{\begin{snugshade}%
 	\indent\textbf{Dissertation S.~#1 Z.~#2}\nopagebreak\\\nopagebreak%
 	#4\\%
-	\indent\textbf{Original #6 (\emph{Nicht} im Literaturverzeichnis angef\"uhrt!)}\nopagebreak\\\nopagebreak%
+	\indent\textbf{Original #6 (\emph{Weder} in Fu\ss{}note noch im Literaturverzeichnis angef\"uhrt!)}\nopagebreak\\\nopagebreak%
 	#5\\%
 	\end{snugshade}}
 

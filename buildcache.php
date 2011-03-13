@@ -8,7 +8,10 @@
 #
 # Die vier Eintraege sind:
 #   $cache['fragments'] =
-#     Liste aller Fragmente, direkt von FragmentLoader::getFragments().
+#     Liste aller Fragmente, direkt von FragmentLoader::getFragmentsG2006().
+#   $cache['fragmenttypes'] =
+#     Liste aller Plagiatskategorien (in Kategorie:PlagiatsKategorien),
+#     direkt von FragmentLoader::getFragmentTypes().
 #   $cache['sources'] =
 #     Liste aller Quellen (mit Vorlage:Quelle). Jede Quelle ist ein
 #     assoziatives Array mit Feldnamen (z.B. 'Autor', 'Hrsg', 'InLit') als
@@ -29,7 +32,12 @@ $cache = array();
 
 # Fragmente laden
 print "Lade Fragmente... "; flush();
-$cache['fragments'] = FragmentLoader::getFragments();
+$cache['fragments'] = FragmentLoader::getFragmentsG2006();
+print "fertig!\n";
+
+# Plagiatskategorien laden
+print "Lade Plagiatskategorien... "; flush();
+$cache['fragmenttypes'] = FragmentLoader::getFragmentTypes();
 print "fertig!\n";
 
 # Quellen laden
