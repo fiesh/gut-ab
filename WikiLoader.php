@@ -75,6 +75,17 @@ class WikiLoader {
 		return $pageids;
 	}
 
+	// Returns a list of page titles of category members.
+	static public function getCategoryMembersTitles($category)
+	{
+		$s = self::queryCategoryMembers($category);
+		$titles = array();
+		foreach($s['query']['categorymembers'] as $member) {
+			$titles[] = $member['title'];
+		}
+		return $titles;
+	}
+
 	// Returns page data for a single page ID, in unserialized format.
 	static public function getEntry($pageid)
 	{
