@@ -2,6 +2,13 @@
 
 require_once('korrekturen.php');
 
+function getCommonPrefix($s1, $s2) {
+	$max = min(strlen($s1), strlen($s2));
+	for ($i = 0; $i < $max && $s1[$i] == $s2[$i]; ++$i)
+		;
+	return substr($s1, 0, $i);
+}
+
 setlocale(LC_ALL, 'de_DE');
 
 if(!file_exists('cache')) {
@@ -30,36 +37,36 @@ $content = preg_replace('/\'\'([^\']*)\'\'/s', '\textsl{$1}', $content);
 $content = preg_replace(';<u>([^<]*)</u>;s', '\underline{$1}', $content);
 
 $arr = explode("\n", $content);
+$arr[] = ''; // for ensuring itemize/enumerate are closed properly
 
 $i = 0;
-$inEnum = false;
-$inItem = false;
+$inEnum = '';
 foreach($arr as $a) {
 	$a = korrStringWiki($a);
 	$new[$i] = '';
-	if(substr($a, 0, 1) === '#') {
-		if(!$inEnum) {
-			$inEnum = true;
-			$new[$i] .= '\begin{enumerate}'."\n";
-		}
-		$new[$i] .= '\item '.substr($a, 1)."\n";
-	} else if(substr($a, 0, 1) === '*') {
-		if(!$inItem) {
-			$inItem = true;
-			$new[$i] .= '\begin{itemize}'."\n";
-		}
-		$new[$i] .= '\item '.substr($a, 1)."\n";
-	} else {
-		if($inEnum) {
+	preg_match('/^([\*#]*)(.*)$/', $a, $match);
+	$enumPrefix = $match[1];
+	$enumSuffix = $match[2];
+
+	$commonEnumPrefix = getCommonPrefix($enumPrefix, $inEnum);
+	while(strlen($inEnum) > strlen($commonEnumPrefix)) {
+		if($inEnum[strlen($inEnum)-1] == '#')
 			$new[$i] .= '\end{enumerate}'."\n";
-			$inEnum = false;
-		}
-		if($inItem) {
+		else
 			$new[$i] .= '\end{itemize}'."\n";
-			$inItem = false;
-		}
-		$new[$i] .= $a."\n";
+		$inEnum = substr($inEnum, 0, strlen($inEnum)-1);
 	}
+	while(strlen($inEnum) < strlen($enumPrefix)) {
+		if($enumPrefix[strlen($inEnum)] == '#')
+			$new[$i] .= '\begin{enumerate}'."\n";
+		else
+			$new[$i] .= '\begin{itemize}'."\n";
+		$inEnum .= $enumPrefix[strlen($inEnum)];
+	}
+
+	if(!empty($enumPrefix))
+		$new[$i] .= '\item ';
+	$new[$i] .= $enumSuffix."\n";
 	$i++;
 }
 
