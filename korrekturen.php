@@ -137,10 +137,19 @@ function korrAmpersand($s)
 	return str_replace('&', '\&', $s);
 }
 
-// , durch and ersetzen in den Autoren
+// , durch and ersetzen in den Autoren (aber nicht in geschweiften Klammern)
 function korrAnd($s)
 {
-	return str_replace(',', ' and ', $s);
+	$depth = 0;
+	for($i = 0; $i < strlen($s); ++$i) {
+		if($s[$i] == ',' && $depth <= 0)
+			$s = substr($s, 0, $i) . ' and ' . substr($s, $i+1);
+		else if($s[$i] == '{')
+			$depth++;
+		else if($s[$i] == '}')
+			$depth--;
+	}
+	return $s;
 }
 
 // u.a. durch and others ersetzen in den Autoren
