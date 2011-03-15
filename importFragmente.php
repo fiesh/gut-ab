@@ -109,9 +109,9 @@ foreach($fragtypes as $fragtypeTitle => $fragtype) {
 		$l['seitefund'] = korrBereich($l['seitefund']);
 		$l['zeilen'] = korrBereich($l['zeilen']);
 		$l['zeilenfund'] = korrBereich($l['zeilenfund']);
-		$l['plagiat'] = korrString($l['plagiat']);
-		$l['orig'] = korrString($l['orig']);
-		$l['anmerkung'] = korrStringWithLinks($l['anmerkung']);
+		$l['plagiat'] = replaceIfEmpty(korrString($l['plagiat']), '---');
+		$l['orig'] = replaceIfEmpty(korrString($l['orig']), '---');
+		$l['anmerkung'] = replaceIfEmpty(korrStringWithLinks($l['anmerkung']), '');
 
 		if($l['seitefund']) {
 			if($l['zeilenfund'])
@@ -124,16 +124,27 @@ foreach($fragtypes as $fragtypeTitle => $fragtype) {
 
 		$start = '\belowpdfbookmark{Fragment '.$l['seite'].' '.$l['zeilen'].'}{'.$l['wikiTitle'].'}';
 
-		
-		if($l['inLit'] === 'ja')
-			$start .= '\fragment{';
-		else if($l['inFN'] === 'ja')
-			$start .= '\fragmentInFN{';
-		else
-			$start .= '\fragmentNichtLit{';
+		if($l['inLit'] === 'ja') {
+			$citedInDiss = '';
+		} else if($l['inFN'] === 'ja') {
+			$citedInDiss = ' (Nur in Fu\ss{}note, aber \emph{nicht} im Literaturverzeichnis angef\"uhrt!)';
+		} else {
+			$citedInDiss = ' (\emph{Weder} in Fu\ss{}note noch im Literaturverzeichnis angef\"uhrt!)';
+		}
 
-		echo $start.$l['seite'].'}{'.$l['zeilen'].'}{'.$l['kategorie'].'}{'.$l['plagiat'].'}{'.$l['orig'].'}{'.$cite.'{'.$l['quelle'].'}}\hypertarget{'.$l['wikiTitle']."}{}\n";
-		if($i++ == 20) break;
+		echo '\begin{fragment}'."\n";
+		echo '\begin{fragmentpart}{Dissertation S.~'.$l['seite'].' Z.~'.$l['zeilen'].'}'."\n";
+		echo $l['plagiat']."\n";
+		echo '\end{fragmentpart}'."\n";
+		echo '\begin{fragmentpart}{Original '.$cite.'{'.$l['quelle'].'}'.$citedInDiss.'}'."\n";
+		echo $l['orig']."\n";
+		echo '\end{fragmentpart}'."\n";
+		if(!empty($l['anmerkung'])) {
+			echo '\begin{fragmentpart}{Anmerkung}'."\n";
+			echo $l['anmerkung']."\n";
+			echo '\end{fragmentpart}'."\n";
+		}
+		echo '\end{fragment}'."\n";
 	}
 }
 

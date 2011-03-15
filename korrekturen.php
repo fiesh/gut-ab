@@ -41,6 +41,7 @@ function korrStringWiki($s, $doTrim=true)
 	$s = str_replace(array(
 			'"',
 			'&',
+			'#',
 			'%',
 			'',
 			'_',
@@ -49,6 +50,7 @@ function korrStringWiki($s, $doTrim=true)
 			'ﬁ',
 			'¬',
 			'ﬂ',
+			'→',
 			'°',
 			'‑',
 			'­',
@@ -60,6 +62,7 @@ function korrStringWiki($s, $doTrim=true)
 		), array(
 			'\textquotedbl{}',
 			'\&',
+			'\#',
 			'\%',
 			'',
 			'\_',
@@ -68,6 +71,7 @@ function korrStringWiki($s, $doTrim=true)
 			'i',
 			' ',
 			'fl',
+			'\textrightarrow{}',
 			'o',
 			'---',
 			'-',
@@ -104,8 +108,12 @@ function korrString($s, $doTrim=true)
 function korrStringWithLinks($s, $doTrim=true)
 {
 	$result = '';
-	foreach(preg_split('!(\[(?:http|https|ftp)://[^\]]*\])!s', $s, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE) as $part) {
-		if(preg_match('!^\[((?:http|https|ftp)://[^\]\s]*)\s*([^\]]*)\]$!s', $part, $match)) {
+	$prots = 'http|https|ftp';
+	$schemeRegex = '(?:(?:'.$prots.'):\/\/)';
+	foreach(preg_split('/(\['.$schemeRegex.'[^][{}<>"\\x00-\\x08\\x0a-\\x1F]+\]|'.$schemeRegex.'[^][{}<>"\\x00-\\x20\\x7F]+)/s', $s, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE) as $part) {
+		if(preg_match('/^'.$schemeRegex.'/s', $part, $match)) {
+			$result .= '\url{'.$part.'}';
+		} else if(preg_match('/^\[('.$schemeRegex.'[^][{}<>"\\x00-\x20\\x7F]+) *([^\]\\x00-\\x08\\x0A-\\x1F]*)?\]$/s', $part, $match)) {
 			//FIXME: wie Links mit angegebenem Linktext behandeln?
 			$result .= '\url{'.$match[1].'}';
 		} else {
@@ -165,6 +173,11 @@ function korrEtAl($s)
 function korrBracket($s)
 {
 	return preg_replace('/^\s*\[(.*)\]\s*$/', '$1', $s);
+}
+
+function replaceIfEmpty($s, $replacement)
+{
+	return (trim($s) == '') ? $replacement : $s;
 }
 
 function titleToKey($title)
