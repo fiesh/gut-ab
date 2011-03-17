@@ -68,6 +68,10 @@ foreach($cache['fragments'] as $f) {
 	if($f[7] != $currentTypeCleaned) {
 		print "%XXX: {$f['wikiTitle']}: Warnung, Diskrepanz zwischen Fragment und Kategorisierung! (".$f[7]." != ".$currentTypeCleaned.")\n";
 	}
+	if($f[8] != $sources[$currentSourceTitle]['InLit']) {
+		print "%XXX: {$f['wikiTitle']}: Warnung, Diskrepanz zwischen InLit in Fragment und Quelle! (".$f[8]." != ".$sources[$currentSourceTitle]['InLit'].")\n";
+	}
+	$list[$i]['inFN'] = $sources[$currentSourceTitle]['InFN'];
 
 	$list[$i]['quelle'] = titleToKey($currentSourceTitle);
 	$list[$i]['seite'] = $f[1];
