@@ -9,28 +9,31 @@ if(!file_exists('cache')) {
 }
 $cache = unserialize(file_get_contents('cache'));
 
+# Liste ignorierter Fragmente/Plagiatskategorien/Quellen anzeigen
+foreach($cache['ignored']['fragments'] as $title) {
+	print "%XXX: Ignoriere Fragment: $title\n";
+}
+foreach($cache['ignored']['fragmenttypes'] as $title) {
+	print "%XXX: Ignoriere Plagiatskategorie: $title\n";
+}
+foreach($cache['ignored']['sources'] as $title) {
+	print "%XXX: Ignoriere Quelle: $title\n";
+}
+
 # Liste der Quellen erzeugen
 $sources = array();
 foreach($cache['sources'] as $source) {
-	if(count($source) >= 2) {
-		if(!isset($source['InLit']))
-			$source['InLit'] = 'nein';
-		if(!isset($source['InFN']))
-			$source['InFN'] = 'nein';
-		$sources[$source['title']] = $source;
-	} else {
-		print "%XXX: Ignoriere Quelle: {$source['title']}\n";
-	}
+	if(!isset($source['InLit']))
+		$source['InLit'] = 'nein';
+	if(!isset($source['InFN']))
+		$source['InFN'] = 'nein';
+	$sources[$source['title']] = $source;
 }
 
 # Liste der Plagiatskategorien holen
 $fragtypes = array();
 foreach($cache['fragmenttypes'] as $fragtype) {
-	if(isset($fragtype['priority']) && $fragtype['priority'] >= 0) {
-		$fragtypes[$fragtype['title']] = $fragtype;
-	} else {
-		print "%XXX: Ignoriere Plagiatskategorie: {$fragtype['title']}\n";
-	}
+	$fragtypes[$fragtype['title']] = $fragtype;
 }
 
 

@@ -8,13 +8,10 @@ class FragmentLoader {
 		$needle = '';
 		for($i = 1; $i < 12; $i++)
 			$needle .= 'val_'.$i.'="([^"]*)"\s+';
-		if (preg_match_all("/$needle/", $s, $a)) {
+		if (preg_match_all("/$needle/", $s, $match) === 1) {
 			for($i = 1; $i < 12; $i++) {
-				$a[$i] = trim($a[$i][0]);
-				if(strpos($a[$i], ',') !== false)
-					$a[$i] = '"'.$a[$i].'"';
+				$a[$i] = trim($match[$i][0]);
 			}
-			$a[0] = $s;
 			return $a;
 		} else {
 			return false;
@@ -32,27 +29,30 @@ class FragmentLoader {
 		return $cats;
 	}
 
-	static private function processFrags($entries, $titleBlacklist=array())
+	static private function processFrags($entries, &$ignored = array())
 	{
+		$titleBlacklist = array('Fragment 99999 11-22');
 		$fragments = array();
 		foreach($entries as $e) {
 			$a = self::processString($e['revisions'][0]['*']);
-			$a['wikiTitle'] = $e['title'];
-			$a['categories'] = self::collectCategories($e);
-			if(isset($a[1]) && $a[1] && !in_array($e['title'], $titleBlacklist))
+			if($a !== false && $a[1] && !in_array($e['title'], $titleBlacklist)) {
+				$a['wikiTitle'] = $e['title'];
+				$a['categories'] = self::collectCategories($e);
 				$fragments[] = $a;
+			} else {
+				$ignored[] = $e['title'];
+			}
 		}
 		return $fragments;
 	}
 
-	static public function getFragments()
+	static public function getFragments(&$ignored = array())
 	{
 		$entries = WikiLoader::getEntriesWithPrefix('Fragment', true, true);
-		$titleBlacklist = array('Fragment 99999 11-22');
-		return self::processFrags($entries, $titleBlacklist);
+		return self::processFrags($entries, $ignored);
 	}
 
-	static public function getFragmentsG2006()
+	static public function getFragmentsG2006(&$ignored = array())
 	{
 		$entries = WikiLoader::getEntriesWithPrefix('Guttenberg-2006/', true, true);
 		$fragmentTitles = array();
@@ -71,7 +71,7 @@ class FragmentLoader {
 		}
 
 		$fragmentEntries = WikiLoader::getEntriesByTitles($fragmentTitles);
-		return self::processFrags($fragmentEntries);
+		return self::processFrags($fragmentEntries, $ignored);
 	}
 
 	static private function parseFragmentType($rawText)
@@ -85,7 +85,7 @@ class FragmentLoader {
 		return $fragtype;
 	}
 
-	static public function getFragmentTypes()
+	static public function getFragmentTypes(&$ignored = array())
 	{
 		$pageids = WikiLoader::getCategoryMembers('Kategorie:PlagiatsKategorien');
 		$entries = WikiLoader::getEntries($pageids, true, true);
@@ -94,8 +94,12 @@ class FragmentLoader {
 		foreach($entries as $entry) {
 			if (substr($entry['title'], 0, 10) == 'Kategorie:') {
 				$fragtype = self::parseFragmentType($entry['revisions'][0]['*']);
-				$fragtype['title'] = $entry['title'];
-				$fragtypes[] = $fragtype;
+				if ($fragtype !== false) {
+					$fragtype['title'] = $entry['title'];
+					$fragtypes[] = $fragtype;
+				} else {
+					$ignored[] = $entry['title'];
+				}
 			}
 		}
 		usort($fragtypes, 'fragmentLoaderTypePriorityCmp');

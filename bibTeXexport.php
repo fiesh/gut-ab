@@ -172,23 +172,18 @@ if(!file_exists('cache')) {
 $cache = unserialize(file_get_contents('cache'));
 
 foreach($cache['sources'] as $source) {
-	if(count($source) >= 2) {
-		$fields = renameAndFix($source);
+	$fields = renameAndFix($source);
 
-		if(!isset($fields['title'])) {
-			print 'Fehlender Titel: '.$source['title']."\n";
-			continue;
-		}
-
-		$type = decideType($fields);
-
-		echo '@'.$type.'{'.titleToKey($source['title']).",\n";
-		foreach($fields as $key => $val) {
-			echo "	$key = {".$val."},\n";
-		}
-		echo "}\n";
-
-	} else {
-		print 'XXX: Ignoriere Quelle: '.$source['title']."\n";
+	if(!isset($fields['title'])) {
+		print 'Fehlender Titel: '.$source['title']."\n";
+		continue;
 	}
+
+	$type = decideType($fields);
+
+	echo '@'.$type.'{'.titleToKey($source['title']).",\n";
+	foreach($fields as $key => $val) {
+		echo "	$key = {".$val."},\n";
+	}
+	echo "}\n";
 }
