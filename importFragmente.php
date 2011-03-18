@@ -141,10 +141,10 @@ foreach($fragtypes as $fragtypeTitle => $fragtype) {
 
 		echo '\begin{fragment}'."\n";
 		echo '\begin{fragmentpart}{Dissertation S.~'.$l['seite'].' Z.~'.$l['zeilen'].'}'."\n";
-		echo $l['plagiat']."\n";
+		echo '\enquote{'.$l['plagiat'].'}'."\n";
 		echo '\end{fragmentpart}'."\n";
 		echo '\begin{fragmentpart}{Original '.$cite.'{'.$l['quelle'].'}'.$citedInDiss.'}'."\n";
-		echo $l['orig']."\n";
+		echo '\enquote{'.$l['orig'].'}'."\n";
 		echo '\end{fragmentpart}'."\n";
 		if(!empty($l['anmerkung'])) {
 			echo '\begin{fragmentpart}{Anmerkung}'."\n";

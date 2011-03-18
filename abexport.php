@@ -4,6 +4,7 @@
 \usepackage{babel}
 \usepackage[utf8]{inputenx}
 \usepackage[sort&compress,square]{natbib}
+\usepackage[babel]{csquotes}
 \usepackage[hyphens]{url}
 \usepackage[draft=false,final,plainpages=false,pdftex]{hyperref}
 \usepackage{graphicx}
