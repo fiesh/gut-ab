@@ -108,7 +108,7 @@ foreach($fragtypes as $fragtypeTitle => $fragtype) {
 	if(!$found)
 		continue;
 
-	echo '\subsection{'.$fragtypeTitle."}\n";
+	echo '\section{'.$fragtypeTitle."}\n";
 	foreach($list as $l) {
 		if($l['kategorie'] !== $fragtypeTitle)
 			continue;

@@ -1,4 +1,4 @@
-\documentclass[ngerman,final,fontsize=12pt,paper=a4,twoside,toc=bibliography,bibtotoc,BCOR=8mm,draft=false]{scrartcl}
+\documentclass[ngerman,final,fontsize=12pt,paper=a4,twoside,toc=bibliography,bibtotoc,BCOR=8mm,draft=false]{scrreprt}
 
 \usepackage[T1]{fontenc}
 \usepackage{babel}
@@ -7,16 +7,18 @@
 \usepackage[babel]{csquotes}
 \usepackage[hyphens]{url}
 \usepackage[draft=false,final,plainpages=false,pdftex]{hyperref}
+\usepackage[usenames]{color}
+\usepackage{eso-pic}
 \usepackage{graphicx}
 \usepackage{pdflscape}
 \usepackage{longtable}
-\usepackage[usenames]{color}
 \usepackage{framed}
 \usepackage{textcomp}
 
 \usepackage[charter,sfscaled]{mathdesign}
 
-\usepackage[spacing=true,tracking=true,kerning=true,babel]{microtype}
+%\usepackage[spacing=true,tracking=true,kerning=true,babel]{microtype}
+\usepackage[spacing=true,kerning=true,babel]{microtype}
 
 \author{GuttenPlag} 
 
@@ -40,21 +42,33 @@
 \newenvironment{fragmentpart}[1]
 	{\indent\textbf{#1}\nopagebreak\\\nopagebreak}
 	{\\}
+\newcommand{\BackgroundPic}
+	{\put(0,0){\parbox[b][\paperheight]{\paperwidth}{%
+		\vfill%
+		\centering%
+		\includegraphics[width=\paperwidth,height=\paperheight,%
+			keepaspectratio]{background.png}%
+		\vfill%
+	}}}
+
+\setkomafont{chapter}{\Large}
+\setkomafont{section}{\large}
+\addtokomafont{disposition}{\normalfont\boldmath\bfseries}
 
 \begin{document}
-\addtokomafont{sectionentry}{\normalfont\bfseries}
-\addtokomafont{disposition}{\normalfont\boldmath\bfseries}
+%\AddToShipoutPicture*{\BackgroundPic}
 \maketitle\thispagestyle{empty}
+%\ClearShipoutPicture
+
 \tableofcontents
 
 <?php require_once('importWiki.php'); ?>
 
-\newpage~\newpage
 \appendix
-\section{Textnachweise}
+\chapter{Textnachweise}
 
 <?php require_once('importFragmente.php'); ?>
-\renewcommand{\refname}{Quellenverzeichnis}
+\renewcommand{\bibname}{Quellenverzeichnis}
 \newpage
 \bibliographystyle{dinat-custom}
 \bibliography{ab}
