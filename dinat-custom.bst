@@ -11,6 +11,9 @@
 %%    If involvedN is nonempty, involved(N-1) must be nonempty too.
 %% 2. @article, @book, @inbook, @incollection, @inproceedings and @misc support
 %%    the inlit field which is appended verbatim at the end.
+%% 3. The url field supports some annotations -- \url{} only encloses the
+%%    the part until the first space, everything beyond that is printed as
+%%    normal text.
 %%------------------------------------------------------------------------------
 %% For use with BibTeX version 0.99a or later.
 %%------------------------------------------------------------------------------
@@ -816,11 +819,36 @@ FUNCTION {push.title}
   if$
 }
 
+FUNCTION {split.space.first}
+% pops a string from the stack and pushes everything in front of the first space
+{ 't :=
+  ""
+  { t empty$ not
+    t #1 #1 substring$ " " = not
+    and } % while$
+    { t #1 #1 substring$ *
+      t #2 global.max$ substring$ 't :=
+    }
+  while$
+}
+
+FUNCTION {split.space.rest}
+% pops a string from the stack and pushes everything after the first space
+{ 't :=
+  { t empty$ not
+    t #1 #1 substring$ " " = not
+    and } % while$
+    { t #2 global.max$ substring$ 't := }
+  while$
+  t
+}
+
 FUNCTION {push.url}
 % prefixed with "URL" and special formatting
 { url empty$
     { "" }
-    { push.url.name " \url{" * url * "}" * 
+    { push.url.name " \url{" * url split.space.first * "}" *
+      url split.space.rest *
       urldate empty$
         { skip$ }
 	{ ". -- " * push.zugriff * ": " * urldate * }
