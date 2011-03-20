@@ -1,4 +1,4 @@
-%% DINAT-CUSTOM.BST   Version 2.5.1   2011-03-13
+%% DINAT-CUSTOM.BST   Version 2.5.2   2011-03-20
 %% DINAT.BST (c) Helge Baumann   email:Helge.Baumann@gmx.de
 %% custom modifications (c) kahrl   email:kahrl@mailinator.com
 %%------------------------------------------------------------------------------
@@ -2039,7 +2039,7 @@ FUNCTION {begin.bib}
   "\begin{thebibliography}{" label.count int.to.str$ * "}" *
   write$ 
   newline$
-  "% this bibliography was produced with the style dinat.bst v2.5"
+  "% this bibliography was produced with the style dinat-custom.bst v2.5.2"
   write$ 
   newline$
   "\makeatletter"
