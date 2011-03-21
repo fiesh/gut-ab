@@ -34,6 +34,9 @@
 #   $abLinks = 'color+box';
 #     Stellt Links als farbigen Text mit farbiger Umrahmung dar.
 #
+#   $abLinks = 'none';
+#     Erzeugt keine Links im PDF.
+#
 $abLinks = 'color';
 
 #
