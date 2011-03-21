@@ -2,6 +2,8 @@ Kurzfassung:
 
     'make' ausfuehren, um den Abschlussbericht zu erstellen.
 
+    Konfigurationsoptionen koennen in config.php definiert werden.
+
     Software-Voraussetzungen sind
     1. PHP 5 (im Kommandozeilen-Modus),
     2. pdflatex und

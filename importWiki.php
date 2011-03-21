@@ -21,16 +21,12 @@ $content = $cache['static'];
 
 $content = preg_replace('/.*BEGIN_ABSCHLUSSBERICHT/s', '', $content);
 
+// references
+$content = korrStringWithLinks($content, true, true);
+
 $content = preg_replace('/===\s*([^=]+?)\s*===/s', '\section{$1}', $content);
 
 $content = preg_replace('/==\s*([^=]+?)\s*==/s', '\chapter{$1}', $content);
-
-// references
-$content = preg_replace('/\[\[([^]|]*)[^]]*\]\]/se', '\'\hyperlink{\'.titleToKey(\'$1\').\'}{$1}\'', $content);
-
-// external links
-// FIXME: doesn't work with [http://... Link text] style links yet
-$content = preg_replace('!\[((http|https|ftp)://[^\]]*)\]!s', '\footnote{\url{$1}}', $content);
 
 $content = preg_replace('/\'\'\'([^\']*)\'\'\'/s', '\textbf{$1}', $content);
 $content = preg_replace('/\'\'([^\']*)\'\'/s', '\textsl{$1}', $content);
@@ -42,7 +38,6 @@ $arr[] = ''; // for ensuring itemize/enumerate are closed properly
 $i = 0;
 $inEnum = '';
 foreach($arr as $a) {
-	$a = korrStringWiki($a);
 	$new[$i] = '';
 	preg_match('/^([\*#]*)(.*)$/', $a, $match);
 	$enumPrefix = $match[1];
@@ -72,4 +67,4 @@ foreach($arr as $a) {
 
 $content = implode("\n", $new);
 
-echo($content);
+print($content);

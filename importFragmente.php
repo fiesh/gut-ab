@@ -108,7 +108,7 @@ foreach($fragtypes as $fragtypeTitle => $fragtype) {
 	if(!$found)
 		continue;
 
-	echo '\section{'.$fragtypeTitle."}\n";
+	print '\section{'.$fragtypeTitle."}\n";
 	foreach($list as $l) {
 		if($l['kategorie'] !== $fragtypeTitle)
 			continue;
@@ -116,8 +116,8 @@ foreach($fragtypes as $fragtypeTitle => $fragtype) {
 		$l['seitefund'] = korrBereich($l['seitefund']);
 		$l['zeilen'] = korrBereich($l['zeilen']);
 		$l['zeilenfund'] = korrBereich($l['zeilenfund']);
-		$l['plagiat'] = replaceIfEmpty(korrString($l['plagiat']), '---');
-		$l['orig'] = replaceIfEmpty(korrString($l['orig']), '---');
+		$l['plagiat'] = replaceIfEmpty(korrStringWithLinks($l['plagiat']), '---');
+		$l['orig'] = replaceIfEmpty(korrStringWithLinks($l['orig']), '---');
 		$l['anmerkung'] = replaceIfEmpty(korrStringWithLinks($l['anmerkung']), '');
 
 		if($l['seitefund']) {
@@ -129,8 +129,6 @@ foreach($fragtypes as $fragtypeTitle => $fragtype) {
 			$cite = '\cite';
 		}
 
-		$start = '\belowpdfbookmark{Fragment '.$l['seite'].' '.$l['zeilen'].'}{'.$l['wikiTitle'].'}';
-
 		if($l['inLit'] === 'ja') {
 			$citedInDiss = '';
 		} else if($l['inFN'] === 'ja') {
@@ -139,19 +137,23 @@ foreach($fragtypes as $fragtypeTitle => $fragtype) {
 			$citedInDiss = ' (\emph{Weder} in Fu\ss{}note noch im Literaturverzeichnis angef\"uhrt!)';
 		}
 
-		echo '\begin{fragment}'."\n";
-		echo '\begin{fragmentpart}{Dissertation S.~'.$l['seite'].' Z.~'.$l['zeilen'].'}'."\n";
-		echo '\enquote{'.$l['plagiat'].'}'."\n";
-		echo '\end{fragmentpart}'."\n";
-		echo '\begin{fragmentpart}{Original '.$cite.'{'.$l['quelle'].'}'.$citedInDiss.'}'."\n";
-		echo '\enquote{'.$l['orig'].'}'."\n";
-		echo '\end{fragmentpart}'."\n";
+		print '\phantomsection{}'."\n";
+		print '\belowpdfbookmark{Fragment '.$l['seite'].' '.$l['zeilen'].'}{'.$l['wikiTitle'].'}'."\n";
+		print '\hypertarget{'.titleToKey($l['wikiTitle']).'}{}'."\n";
+
+		print '\begin{fragment}'."\n";
+		print '\begin{fragmentpart}{Dissertation S.~'.$l['seite'].' Z.~'.$l['zeilen'].'}'."\n";
+		print '\enquote{'.$l['plagiat'].'}'."\n";
+		print '\end{fragmentpart}'."\n";
+		print '\begin{fragmentpart}{Original '.$cite.'{'.$l['quelle'].'}'.$citedInDiss.'}'."\n";
+		print '\enquote{'.$l['orig'].'}'."\n";
+		print '\end{fragmentpart}'."\n";
 		if(!empty($l['anmerkung'])) {
-			echo '\begin{fragmentpart}{Anmerkung}'."\n";
-			echo $l['anmerkung']."\n";
-			echo '\end{fragmentpart}'."\n";
+			print '\begin{fragmentpart}{Anmerkung}'."\n";
+			print $l['anmerkung']."\n";
+			print '\end{fragmentpart}'."\n";
 		}
-		echo '\end{fragment}'."\n";
+		print '\end{fragment}'."\n";
 	}
 }
 

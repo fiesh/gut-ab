@@ -181,9 +181,9 @@ foreach($cache['sources'] as $source) {
 
 	$type = decideType($fields);
 
-	echo '@'.$type.'{'.titleToKey($source['title']).",\n";
+	print '@'.$type.'{'.titleToKey($source['title']).",\n";
 	foreach($fields as $key => $val) {
-		echo "	$key = {".$val."},\n";
+		print "	$key = {".$val."},\n";
 	}
-	echo "}\n";
+	print "}\n";
 }
