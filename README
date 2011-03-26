@@ -9,14 +9,17 @@ Kurzfassung:
     2. pdflatex und
     3. bibtex.
 
+    Fuer Windows-Nutzer, die kein make installiert haben, gibt es die
+    Batchdatei run.bat als Alternative.
+
 
 ================================================================================
 
 Der Erstellungsprozess funktioniert (grob) wie folgt:
 
-1. Fragmente, Quellen und AbschlussberichtEntwurf werden aus dem Wiki
-   heruntergeladen und in der Cache-Datei (cache) zwischengespeichert
-   (buildcache.php).
+1. Fragmente, Plagiatskategorien, Quellen und EntwurfAbschlussbericht
+   werden aus dem Wiki heruntergeladen und in der Cache-Datei (cache)
+   zwischengespeichert (buildcache.php).
 
 2. Das Literaturverzeichnis (ab.bib) wird aus dem Cache generiert
    (bibTeXexport.php).
