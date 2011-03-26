@@ -30,6 +30,7 @@ function korrStringWiki($s, $doTrim=true)
 	//$s = preg_replace('/"([^"]+)"/', '"`$1"\'', $s); // Anfuehrungszeichen lassen sich nicht korrekt reparieren.
 	$s = str_replace(array(
 			'"',
+			'&ndash;',
 			'&',
 			'#',
 			'%',
@@ -51,6 +52,7 @@ function korrStringWiki($s, $doTrim=true)
 			'−',
 		), array(
 			'\textquotedbl{}',
+			'--',
 			'\&',
 			'\#',
 			'\%',
