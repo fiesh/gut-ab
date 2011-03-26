@@ -193,6 +193,15 @@ function korrBracket($s)
 	return preg_replace('/^\s*\[(.*)\]\s*$/', '$1', $s);
 }
 
+// Hack fuer [http:// Linktext]-Links im URL-Feld
+// wird wegen umbruch von zu breiten floats im Wiki (IE/Chrome) benoetigt
+function korrUrlForBibliography($s)
+{
+	$prots = 'http|https|ftp';
+	$schemeRegex = '(?:(?:'.$prots.'):\/\/)';
+	return preg_replace('/^\[('.$schemeRegex.'[^][{}<>"\\x00-\x20\\x7F]+) *([^\]\\x00-\\x08\\x0A-\\x1F]*)?\]$/s', '$1', $s);
+}
+
 function replaceIfEmpty($s, $replacement)
 {
 	return (trim($s) == '') ? $replacement : $s;

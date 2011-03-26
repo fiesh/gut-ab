@@ -139,6 +139,7 @@ function renameAndFix($source)
 		'pages' => array('korrBereich'),
 		'note' => array('korrStringWithLinks'),
 		'year' => array('korrBracket'),
+		'url' => array('korrUrlForBibliography'),
 	);
 	foreach($korrs as $key => $korrFunctions) {
 		if(isset($ret[$key]))
