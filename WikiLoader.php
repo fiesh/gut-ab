@@ -2,7 +2,7 @@
 
 class WikiLoader {
 	const API = 'http://de.guttenplag.wikia.com/api.php';
-	const PAGES_PER_QUERY = 50;
+	const PAGES_PER_QUERY = 48;
 
 	// Returns a list of pages with a given prefix in unserialized format.
 	// Gracefully resumes the API query if the result limit is exceeded.
