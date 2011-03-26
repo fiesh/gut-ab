@@ -1,4 +1,4 @@
-%% DINAT-CUSTOM.BST   Version 2.5.2   2011-03-20
+%% DINAT-CUSTOM.BST   Version 2.5.3   2011-03-26
 %% DINAT.BST (c) Helge Baumann   email:Helge.Baumann@gmx.de
 %% custom modifications (c) kahrl   email:kahrl@mailinator.com
 %%------------------------------------------------------------------------------
@@ -14,6 +14,9 @@
 %% 3. The url field supports some annotations -- \url{} only encloses the
 %%    the part until the first space, everything beyond that is printed as
 %%    normal text.
+%% 4. Years may be enclosed within square brackets without the
+%%    bibliography entry labels getting trashed.
+%% 5. Correct sorting order with UTF-8 and german umlauts.
 %%------------------------------------------------------------------------------
 %% For use with BibTeX version 0.99a or later.
 %%------------------------------------------------------------------------------
@@ -595,9 +598,28 @@ FUNCTION {format.dashes}
   while$ % { t empty$ not }
 }
 
+FUNCTION {format.nobrackets}
+% if the argument is enclosed by square brackets, removes them
+% then pushes the modified string (or pushes the original string otherwise)
+{ 't :=
+  t #1 #1 substring$ "[" =
+  t #-1 #1 substring$ "]" =
+  and
+    { t #2 global.max$ substring$ 't :=
+      ""
+      { t #1 #2 substring$ "]" = not }
+        { t #1 #1 substring$ *
+          t #2 global.max$ substring$ 't :=
+        }
+      while$
+    }
+    { t }
+  if$
+}
+
 
 %%------------------------------------------------------------------------------
-%% manipulte entries on the stack
+%% manipulate entries on the stack
 %%------------------------------------------------------------------------------
 FUNCTION {tie.or.space.connect}
 % connect two top items with space or ~, if second is shorter than 3
@@ -1700,11 +1722,53 @@ FUNCTION {default.type}
 
 
 %%------------------------------------------------------------------------------
+%% string helpers
+%%------------------------------------------------------------------------------
+STRINGS {str.t str.haystack str.needle str.replacement}
+INTEGERS {str.n}
+
+FUNCTION {str.length}
+{ 'str.t :=
+  #0
+  { str.t empty$ not } % while
+    { str.t #2 global.max$ substring$ 'str.t :=
+      #1 +
+    }
+  while$
+}
+
+FUNCTION {str.replace}
+{ 'str.replacement :=
+  'str.needle :=
+  'str.haystack :=
+  str.needle str.length 'str.n :=
+  ""
+  { str.haystack empty$ not } % while
+    { str.haystack #1 str.n substring$ str.needle =
+      { str.replacement *
+        str.haystack str.n #1 + global.max$ substring$ 'str.haystack :=
+      }
+      { str.haystack #1 #1 substring$ *
+        str.haystack #2 global.max$ substring$ 'str.haystack :=
+      }
+      if$
+    }
+  while$
+}
+
+%%------------------------------------------------------------------------------
 %% for producing the labels
 %%------------------------------------------------------------------------------
 FUNCTION {sortify}
 % simplify for sorting
-{ purify$
+{ "Ä" "A" str.replace
+  "ä" "a" str.replace
+  "Ö" "O" str.replace
+  "ö" "o" str.replace
+  "Ü" "U" str.replace
+  "ü" "u" str.replace
+  "ß" "s" str.replace
+  purify$
   "l" change.case$
 }
 
@@ -1841,9 +1905,9 @@ FUNCTION {calc.label}
 % make a full label
 { calc.short.authors
   short.list "(" *
-  year push.field.or.null format.dashes * 'label :=
+  year format.nobrackets push.field.or.null format.dashes * 'label :=
   short.list " " *
-  year push.field.or.null format.dashes * 'dinat.label :=  
+  year format.nobrackets push.field.or.null format.dashes * 'dinat.label :=  
   label sortify 'sort.label :=
 }
 
@@ -2039,7 +2103,7 @@ FUNCTION {begin.bib}
   "\begin{thebibliography}{" label.count int.to.str$ * "}" *
   write$ 
   newline$
-  "% this bibliography was produced with the style dinat-custom.bst v2.5.2"
+  "% this bibliography was produced with the style dinat-custom.bst v2.5.3"
   write$ 
   newline$
   "\makeatletter"
