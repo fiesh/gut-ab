@@ -22,7 +22,7 @@ $content = $cache['static'];
 $content = preg_replace('/.*BEGIN_ABSCHLUSSBERICHT/s', '', $content);
 
 // references
-$content = korrStringWithLinks($content, true, true);
+$content = korrStringWithLinks($content, true, true, true);
 
 $content = preg_replace('/===\s*([^=]+?)\s*===/s', '\section{$1}', $content);
 

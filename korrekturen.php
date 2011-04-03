@@ -97,12 +97,14 @@ function korrString($s, $doTrim=true)
 }
 
 // wie korrString, aber externe Links in Anmerkung mit @url umfassen
-function korrStringWithLinks($s, $doTrim=true, $stuffIntoFootnotes=false)
+function korrStringWithLinks($s, $doTrim=true, $stuffIntoFootnotes=false, $enableRef = false)
 {
 	$result = '';
 	$prots = 'http|https|ftp';
 	$schemeRegex = '(?:(?:'.$prots.'):\/\/)';
-	foreach(preg_split('/(\[\[.+?\]\]|\['.$schemeRegex.'[^][{}<>"\\x00-\\x08\\x0a-\\x1F]+\]|'.$schemeRegex.'[^][{}<>"\\x00-\\x20\\x7F]+)/s', $s, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE) as $part) {
+	$refRegex = $enableRef ? '|<ref>.*?<\/ref>' : '';
+	if ($enableRef) print "enableRef\n";
+	foreach(preg_split('/(\[\[.+?\]\]|\['.$schemeRegex.'[^][{}<>"\\x00-\\x08\\x0a-\\x1F]+\]|'.$schemeRegex.'[^][{}<>"\\x00-\\x20\\x7F]+'.$refRegex.')/s', $s, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE) as $part) {
 		if(preg_match('/^\[\[([^|]+)\]\]$/', $part, $match)) {
 			// interne Links ohne Linktext
 			$result .= '\hyperlink{'.titleToKey($match[1]).'}{'.korrString($match[1]).'}';
@@ -114,27 +116,31 @@ function korrStringWithLinks($s, $doTrim=true, $stuffIntoFootnotes=false)
 		} else if(preg_match('/^'.$schemeRegex.'/s', $part, $match)) {
 			// externe Links ohne Linktext
 			if($stuffIntoFootnotes) {
-				$result .= '\footnote{\url{'.$part.'}}';
+				$result .= '\footnote{\url{'.urlToTex($part).'}}';
 			} else {
-				$result .= '\url{'.$part.'}';
+				$result .= '\url{'.urlToTex($part).'}';
 			}
 
 		} else if(preg_match('/^\[('.$schemeRegex.'[^][{}<>"\\x00-\x20\\x7F]+) *([^\]\\x00-\\x08\\x0A-\\x1F]*)?\]$/s', $part, $match)) {
 			if(isset($match[2]) && trim($match[2])) {
 				// externe Links mit Linktext
 				if($stuffIntoFootnotes) {
-					$result .= korrString($match[2]).'\footnote{\url{'.$match[1].'}}';
+					$result .= korrString($match[2]).'\footnote{\url{'.urlToTex($match[1]).'}}';
 				} else {
-					$result .= '\href{'.$match[1].'}{'.korrString($match[2]).'}';
+					$result .= '\href{'.urlToTex($match[1]).'}{'.korrString($match[2]).'}';
 				}
 			} else {
 				// externe Links ohne Linktext
 				if($stuffIntoFootnotes) {
-					$result .= '\footnote{\url{'.$match[1].'}}';
+					$result .= '\footnote{\url{'.urlToTex($match[1]).'}}';
 				} else {
-					$result .= '\url{'.$match[1].'}';
+					$result .= '\url{'.urlToTex($match[1]).'}';
 				}
 			}
+
+		} else if($enableRef && preg_match('/^<ref>(.*)<\/ref>$/s', $part, $match)) {
+			// <ref>...</ref>
+			$result .= '\footnote{' . korrStringWithLinks($match[1], false, false, false) . '}';
 
 		} else {
 			$result .= korrString($part, false);
@@ -216,5 +222,11 @@ function titleToKey($title)
 	$title = preg_replace('/[^a-zA-Z0-9]/', '-', $title);
 
 	return $title;
+}
+
+// % und # in URLs mit Backslash escapen
+function urlToTex($s)
+{
+	return str_replace(array('%', '#'), array('\\%', '\\#'), $s);
 }
 
