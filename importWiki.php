@@ -28,9 +28,7 @@ $content = preg_replace('/===\s*([^=]+?)\s*===/s', '\section{$1}', $content);
 
 $content = preg_replace('/==\s*([^=]+?)\s*==/s', '\chapter{$1}', $content);
 
-$content = preg_replace('/\'\'\'([^\']*)\'\'\'/s', '\textbf{$1}', $content);
-$content = preg_replace('/\'\'([^\']*)\'\'/s', '\textsl{$1}', $content);
-$content = preg_replace(';<u>([^<]*)</u>;s', '\underline{$1}', $content);
+$content = korrWikiFontStyles($content);
 
 $arr = explode("\n", $content);
 $arr[] = ''; // for ensuring itemize/enumerate are closed properly

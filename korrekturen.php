@@ -60,7 +60,7 @@ function korrStringWiki($s, $doTrim=true)
 			'\_',
 			'\^',
 			'\'',
-			'i',
+			'fi',
 			' ',
 			'fl',
 			'\textrightarrow{}',
@@ -153,6 +153,33 @@ function korrStringWithLinks($s, $doTrim=true, $stuffIntoFootnotes=false, $enabl
 	return $result;
 }
 
+// konvertiert Wiki-Formatierung ('''...''', ''...'', <u>...</u>) nach LaTeX
+function korrWikiFontStyles($s)
+{
+	$s = preg_replace('/\'\'\'([^\']*)\'\'\'/s', '\textbf{$1}', $s);
+	$s = preg_replace('/\'\'([^\']*)\'\'/s', '\textsl{$1}', $s);
+	$s = preg_replace(';<u>([^<]*)</u>;s', '\underline{$1}', $s);
+	return $s;
+}
+
+// Dissertation und Original eines Fragments korrigieren
+function korrFragmentText($s)
+{
+	$s = trim($s);
+	$s = korrStringWithLinks($s);
+	$s = korrWikiFontStyles($s);
+	return ($s != '') ? $s : '---';
+}
+
+// Anmerkung eines Fragments korrigieren
+function korrFragmentAnmerkung($s)
+{
+	$s = trim($s);
+	$s = preg_replace('/\{\{Fragmentsichter[^}]*\}\}/i', '', $s);
+	$s = korrStringWithLinks($s);
+	return $s;
+}
+
 // Grossbuchstaben in Titel und Sammlung vor bibtex schuetzen
 function korrVersalien($s)
 {
@@ -193,9 +220,6 @@ function korrEtAl($s)
 }
 
 // aeussere eckige Klammern entfernen
-// FIXME: Jahr und [Jahr] unterscheiden sich.
-//   Jahr ist das tatsaechliche Erscheinungsjahr.
-//   [Jahr] ist das Erscheinungsjahr der Ausgabe. Wie in bibtex darstellen?
 function korrBracket($s)
 {
 	return preg_replace('/^\s*\[(.*)\]\s*$/', '$1', $s);
@@ -210,17 +234,11 @@ function korrUrlForBibliography($s)
 	return preg_replace('/^\[('.$schemeRegex.'[^][{}<>"\\x00-\x20\\x7F]+) *([^\]\\x00-\\x08\\x0A-\\x1F]*)?\]$/s', '$1', $s);
 }
 
-function replaceIfEmpty($s, $replacement)
-{
-	return (trim($s) == '') ? $replacement : $s;
-}
-
 function titleToKey($title)
 {
 	$title = str_replace('Kategorie:', '', $title);
 	$title = str_replace(' ', '-', $title);
 	$title = preg_replace('/[^a-zA-Z0-9]/', '-', $title);
-
 	return $title;
 }
 

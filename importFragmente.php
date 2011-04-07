@@ -116,9 +116,9 @@ foreach($fragtypes as $fragtypeTitle => $fragtype) {
 		$l['seitefund'] = korrBereich($l['seitefund']);
 		$l['zeilen'] = korrBereich($l['zeilen']);
 		$l['zeilenfund'] = korrBereich($l['zeilenfund']);
-		$l['plagiat'] = replaceIfEmpty(korrStringWithLinks($l['plagiat']), '---');
-		$l['orig'] = replaceIfEmpty(korrStringWithLinks($l['orig']), '---');
-		$l['anmerkung'] = replaceIfEmpty(korrStringWithLinks($l['anmerkung']), '');
+		$l['plagiat'] = korrFragmentText($l['plagiat']);
+		$l['orig'] = korrFragmentText($l['orig']);
+		$l['anmerkung'] = korrFragmentAnmerkung($l['anmerkung']);
 
 		if($l['seitefund']) {
 			if($l['zeilenfund'])

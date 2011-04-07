@@ -12,10 +12,6 @@ class FragmentLoader {
 			for($i = 1; $i < 12; $i++) {
 				$a[$i] = trim(html_entity_decode($match[$i][0], ENT_QUOTES, 'UTF-8'));
 			}
-
-			// Sichtungsvermerk aus Anmerkung entfernen
-			$a[11] = trim(preg_replace('/\{\{Fragmentsichter[^}]*\}\}/i', '', $a[11]));
-
 			return $a;
 		} else {
 			return false;
