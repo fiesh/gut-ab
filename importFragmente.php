@@ -114,14 +114,19 @@ if(SORT_BY_CATEGORY) {
 		print_fragments($list, $fragtypeTitle);
 	}
 } else {
-	print_fragments($list, FALSE);
+	print_fragments($list, FALSE, $categoryWhitelist);
 }
 
-function print_fragments($list, $fragtypeTitle)
+function print_fragments($list, $fragtypeTitle, $whitelist=FALSE)
 {
 	foreach($list as $l) {
 		if($fragtypeTitle !== FALSE && $l['kategorie'] !== $fragtypeTitle)
 			continue;
+		if($fragtypeTitle === FALSE) {
+			$k = str_replace('Kategorie:', '', $l['kategorie']);
+			if(!in_array($k, $whitelist))
+				continue;
+		}
 		$l['seite'] = korrBereich($l['seite']);
 		$l['seitefund'] = korrBereich($l['seitefund']);
 		$l['zeilen'] = korrBereich($l['zeilen']);
@@ -152,7 +157,6 @@ function print_fragments($list, $fragtypeTitle)
 		print '\hypertarget{'.titleToKey($l['wikiTitle']).'}{}'."\n";
 
 		print '\begin{fragment}'."\n";
-		$k = str_replace('Kategorie:', '', $l['kategorie']);
 		print '\begin{fragmentpart}{Dissertation S.~'.$l['seite'].' Z.~'.$l['zeilen'].(SORT_BY_CATEGORY ? '}' : ' ('.$k.')}')."\n";
 		print '\enquote{'.$l['plagiat'].'}'."\n";
 		print '\end{fragmentpart}'."\n";

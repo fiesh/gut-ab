@@ -13,7 +13,23 @@
 # SORT_BY_CATEGORY legt fest, ob die Fragmente einfach nach Seitenzahl sortiert
 # angehaengt werden, oder ob erst eine Aufteilung nach Plagiatstyp erfolgt
 #
-define(SORT_BY_CATEGORY, TRUE);
+define(SORT_BY_CATEGORY, FALSE);
+
+#
+# $categoryWhitelist listet alle Kategorien auf, aus denen Fragmente aufgelistet
+# werden.
+#
+$categoryWhitelist = array(
+	'KomplettPlagiat',
+	'Verschleierung',
+	'ÜbersetzungsPlagiat',
+	'StrukturPlagiat',
+	'AlibiFußNote',
+	'Bauernopfer',
+	'VerschärftesBauernOpfer',
+	'HalbsatzFlickerei',
+	'ShakeAndPaste',
+);
 
 #
 # $abLinks definiert, wie Links im PDF (interne Links, Quellen-Links, URL-Links)
