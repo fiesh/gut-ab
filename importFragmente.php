@@ -1,6 +1,6 @@
 <?php
 
-require_once('korrekturen.php');
+require_once('config.php');
 
 # Cache laden
 if(!file_exists('cache')) {
@@ -97,20 +97,30 @@ foreach($cache['fragments'] as $f) {
 
 array_multisort($sort, $list);
 
-foreach($fragtypes as $fragtypeTitle => $fragtype) {
-	$found = false;
-	foreach($list as $l) {
-		if($l['kategorie'] === $fragtypeTitle) {
-			$found = true;
-			break;
+if(SORT_BY_CATEGORY) {
+	foreach($fragtypes as $fragtypeTitle => $fragtype) {
+		$found = false;
+		foreach($list as $l) {
+			if($l['kategorie'] === $fragtypeTitle) {
+				$found = true;
+				break;
+			}
 		}
-	}
-	if(!$found)
-		continue;
+		if(!$found)
+			continue;
 
-	print '\section{'.$fragtypeTitle."}\n";
+		print '\subsection{'.$fragtypeTitle."}\n";
+
+		print_fragments($list, $fragtypeTitle);
+	}
+} else {
+	print_fragments($list, FALSE);
+}
+
+function print_fragments($list, $fragtypeTitle)
+{
 	foreach($list as $l) {
-		if($l['kategorie'] !== $fragtypeTitle)
+		if($fragtypeTitle !== FALSE && $l['kategorie'] !== $fragtypeTitle)
 			continue;
 		$l['seite'] = korrBereich($l['seite']);
 		$l['seitefund'] = korrBereich($l['seitefund']);
@@ -142,7 +152,8 @@ foreach($fragtypes as $fragtypeTitle => $fragtype) {
 		print '\hypertarget{'.titleToKey($l['wikiTitle']).'}{}'."\n";
 
 		print '\begin{fragment}'."\n";
-		print '\begin{fragmentpart}{Dissertation S.~'.$l['seite'].' Z.~'.$l['zeilen'].'}'."\n";
+		$k = str_replace('Kategorie:', '', $l['kategorie']);
+		print '\begin{fragmentpart}{Dissertation S.~'.$l['seite'].' Z.~'.$l['zeilen'].(SORT_BY_CATEGORY ? '}' : ' ('.$k.')}')."\n";
 		print '\enquote{'.$l['plagiat'].'}'."\n";
 		print '\end{fragmentpart}'."\n";
 		print '\begin{fragmentpart}{Original '.$cite.'{'.$l['quelle'].'}'.$citedInDiss.'}'."\n";

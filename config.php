@@ -10,6 +10,12 @@
 #
 
 #
+# SORT_BY_CATEGORY legt fest, ob die Fragmente einfach nach Seitenzahl sortiert
+# angehaengt werden, oder ob erst eine Aufteilung nach Plagiatstyp erfolgt
+#
+define(SORT_BY_CATEGORY, TRUE);
+
+#
 # $abLinks definiert, wie Links im PDF (interne Links, Quellen-Links, URL-Links)
 # dargestellt werden. Hinweis: Bei allen Werten ausser $abLinks='none' sind
 # Links klickbar.
