@@ -41,10 +41,13 @@ $list = array();
 $fragmentTypeUsed = array();
 $i = 0;
 foreach($cache['fragments'] as $f) {
-	$currentSources = array_values(array_intersect($f['categories'],
-	                                               array_keys($sources)));
-	$currentTypes = array_values(array_intersect($f['categories'],
-	                                             array_keys($fragtypes)));
+	$currentSources = array_values(array_intersect($f['categories'], array_keys($sources)));
+	$currentTypes = array_values(array_intersect($f['categories'], array_keys($fragtypes)));
+	
+	$z = array_values(array_intersect($f['categories'], $categoryWhitelist));
+	if(empty($z))
+		continue; // Silently ignore everything that does not match whitelist
+
 
 	if(empty($currentSources)) {
 		print "%XXX: {$f['wikiTitle']}: Ignoriere, keine Quelle gefunden! (".implode(", ", $f['categories']).")\n";
@@ -115,19 +118,14 @@ if(SORT_BY_CATEGORY) {
 		print_fragments($list, $fragtypeTitle);
 	}
 } else {
-	print_fragments($list, FALSE, $categoryWhitelist);
+	print_fragments($list, FALSE);
 }
 
-function print_fragments($list, $fragtypeTitle, $whitelist=FALSE)
+function print_fragments($list, $fragtypeTitle)
 {
 	foreach($list as $l) {
 		if($fragtypeTitle !== FALSE && $l['kategorie'] !== $fragtypeTitle)
 			continue;
-		if($fragtypeTitle === FALSE) {
-			$k = str_replace('Kategorie:', '', $l['kategorie']);
-			if(!in_array($k, $whitelist))
-				continue;
-		}
 		$l['seite'] = korrBereich($l['seite']);
 		$l['seitefund'] = korrBereich($l['seitefund']);
 		$l['zeilen'] = korrBereich($l['zeilen']);
@@ -158,6 +156,7 @@ function print_fragments($list, $fragtypeTitle, $whitelist=FALSE)
 		print '\hypertarget{'.titleToKey($l['wikiTitle']).'}{}'."\n";
 
 		print '\begin{fragment}'."\n";
+		$k = str_replace('Kategorie:', '', $l['kategorie']);
 		print '\begin{fragmentpart}{Dissertation S.~'.$l['seite'].' Z.~'.$l['zeilen'].(SORT_BY_CATEGORY ? '}' : ' ('.$k.')}')."\n";
 		print '\enquote{'.$l['plagiat'].'}'."\n";
 		print '\end{fragmentpart}'."\n";

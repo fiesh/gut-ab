@@ -20,15 +20,15 @@ define(SORT_BY_CATEGORY, FALSE);
 # werden.
 #
 $categoryWhitelist = array(
-	'KomplettPlagiat',
-	'Verschleierung',
-	'ÜbersetzungsPlagiat',
-	'StrukturPlagiat',
-	'AlibiFußNote',
-	'BauernOpfer',
-	'VerschärftesBauernopfer',
-	'HalbsatzFlickerei',
-	'ShakeAndPaste',
+	'Kategorie:KomplettPlagiat',
+	'Kategorie:Verschleierung',
+	'Kategorie:ÜbersetzungsPlagiat',
+	'Kategorie:StrukturPlagiat',
+	'Kategorie:AlibiFußNote',
+	'Kategorie:BauernOpfer',
+	'Kategorie:VerschärftesBauernopfer',
+	'Kategorie:HalbsatzFlickerei',
+	'Kategorie:ShakeAndPaste',
 );
 
 #
