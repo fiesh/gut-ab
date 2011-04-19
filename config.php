@@ -25,8 +25,8 @@ $categoryWhitelist = array(
 	'ÜbersetzungsPlagiat',
 	'StrukturPlagiat',
 	'AlibiFußNote',
-	'Bauernopfer',
-	'VerschärftesBauernOpfer',
+	'BauernOpfer',
+	'VerschärftesBauernopfer',
 	'HalbsatzFlickerei',
 	'ShakeAndPaste',
 );
@@ -70,6 +70,13 @@ $abLinks = 'color';
 $abEnableLinkColors = 'yes';
 
 #
+# $typesFrom und $typesTo dienen der Korrektur von Kategorien, die falsch im
+# Wiki hinterlegt sind.
+# 
+$typesFrom = array('VerschärftesBauernopfer');
+$typesTo = array('VerschärftesBauernOpfer');
+
+#
 # $abInternalLinkColor definiert die Farbe von Links, die auf eine andere
 # Stelle im selben PDF verweisen (z.B. Fussnotenverweise).
 # Wertebereich: xcolor-Farbname
@@ -80,7 +87,7 @@ $abEnableLinkColors = 'yes';
 # Wertebereich: Rahmenfarbe (R G B -- jeweils Wert zwischen 0 und 1)
 # Standard: '1 0 0'
 #
-$abInternalLinkColor = 'red';
+$abInternalLinkColor = 'black';
 $abInternalLinkBorderColor = '1 0 0';
 
 #

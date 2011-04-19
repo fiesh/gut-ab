@@ -67,6 +67,7 @@ foreach($cache['fragments'] as $f) {
 	$currentSourceTitle = $currentSources[0];
 	$currentTypeTitle = $currentTypes[0];
 	$currentTypeCleaned = preg_replace('/^Kategorie:/', '', $currentTypeTitle);
+	$currentTypeCleaned = str_replace($typesFrom, $typesTo, $currentTypeCleaned);
 
 	if($f[7] != $currentTypeCleaned) {
 		print "%XXX: {$f['wikiTitle']}: Warnung, Diskrepanz zwischen Fragment und Kategorisierung! (".$f[7]." != ".$currentTypeCleaned.")\n";
