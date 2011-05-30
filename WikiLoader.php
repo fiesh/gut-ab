@@ -18,7 +18,7 @@ class WikiLoader {
 		while(isset($s['query-continue'])) {
 			$url2 = $url.'&gapfrom='.urlencode($s['query-continue']['allpages']['gapfrom']);
 			unset($s['query-continue']);
-			$s = array_merge_recursive($s, unserialize(file_get_contents($url2)));
+			$s = wikiLoaderMerge($s, unserialize(file_get_contents($url2)));
 		}
 
 		return $s;
@@ -34,7 +34,7 @@ class WikiLoader {
 		while(isset($s['query-continue'])) {
 			$url2 = $url.'&cmcontinue='.urlencode($s['query-continue']['categorymembers']['cmcontinue']);
 			unset($s['query-continue']);
-			$s = array_merge_recursive($s, unserialize(file_get_contents($url2)));
+			$s = wikiLoaderMerge($s, unserialize(file_get_contents($url2)));
 		}
 
 		return $s;
@@ -49,7 +49,7 @@ class WikiLoader {
 		while(isset($s['query-continue'])) {
 			$url2 = $url.'&clcontinue='.urlencode($s['query-continue']['categories']['clcontinue']);
 			unset($s['query-continue']);
-			$s = array_merge_recursive($s, unserialize(file_get_contents($url2)));
+			$s = wikiLoaderMerge($s, unserialize(file_get_contents($url2)));
 		}
 
 		return $s;
@@ -64,7 +64,7 @@ class WikiLoader {
 		while(isset($s['query-continue'])) {
 			$url2 = $url.'&clcontinue='.urlencode($s['query-continue']['categories']['clcontinue']);
 			unset($s['query-continue']);
-			$s = array_merge_recursive($s, unserialize(file_get_contents($url2)));
+			$s = wikiLoaderMerge($s, unserialize(file_get_contents($url2)));
 		}
 
 		return $s;
@@ -193,4 +193,22 @@ function wikiLoaderIsNonRedirect($entry) {
 }
 function wikiLoaderTitleCmp($entry1, $entry2) {
 	return strnatcasecmp($entry1['title'], $entry2['title']);
+}
+
+// Replacement for array_merge_recursive with one difference:
+//   it does not append arrays with numeric indices (this "feature" of
+//   array_merge_recursive would break WikiLoader::queryEntries())
+function wikiLoaderMerge($obj1, $obj2) {
+	if (is_array($obj1) && is_array($obj2)) {
+		foreach ($obj2 as $key => $value) {
+			if (isset($obj1[$key])) {
+				$obj1[$key] = wikiLoaderMerge($obj1[$key], $value);
+			} else {
+				$obj1[$key] = $value;
+			}
+		}
+		return $obj1;
+	} else {
+		return $obj2;
+	}
 }

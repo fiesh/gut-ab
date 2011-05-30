@@ -61,7 +61,7 @@ print "fertig!\n";
 
 # Entwurf laden
 print "Lade Entwurf... "; flush();
-$cache['static'] = WikiLoader::getRawTextByTitle('EntwurfAbschlussbericht');
+$cache['static'] = WikiLoader::getRawTextByTitle('Abschlussbericht/Entwurf (Inhalt)');
 print "fertig!\n";
 
 # Ignorierte Eintraege speichern

@@ -13,7 +13,7 @@
 # SORT_BY_CATEGORY legt fest, ob die Fragmente einfach nach Seitenzahl sortiert
 # angehaengt werden, oder ob erst eine Aufteilung nach Plagiatstyp erfolgt
 #
-define(SORT_BY_CATEGORY, FALSE);
+define('SORT_BY_CATEGORY', FALSE);
 
 #
 # $categoryWhitelist listet alle Kategorien auf, aus denen Fragmente aufgelistet
