@@ -1,4 +1,4 @@
-\documentclass[ngerman,final,fontsize=12pt,paper=a4,twoside,toc=bibliography,bibtotoc,BCOR=8mm,draft=false]{scrreprt}
+\documentclass[ngerman,final,fontsize=12pt,paper=a4,twoside,bibliography=totoc,BCOR=8mm,draft=false]{scrreprt}
 
 \usepackage[T1]{fontenc}
 \usepackage{babel}
@@ -74,10 +74,14 @@ if($abEnableLinkColors === 'yes') {
 
 \definecolor{shadecolor}{rgb}{0.95,0.95,0.95} 
 
-\newenvironment{fragment}{\begin{snugshade}}{\end{snugshade}}
+\newenvironment{fragment}
+	{\begin{snugshade}}
+	{\end{snugshade}
+	 \penalty-200
+	 \vskip 0pt plus 10mm minus 5mm}
 \newenvironment{fragmentpart}[1]
-	{\indent\textbf{#1}\nopagebreak\\\nopagebreak}
-	{\\}
+	{\indent\textbf{#1}\par\penalty500\noindent}
+	{\par}
 \newcommand{\BackgroundPic}
 	{\put(0,0){\parbox[b][\paperheight]{\paperwidth}{%
 		\vfill%
